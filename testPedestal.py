@@ -51,23 +51,23 @@ class Shot:
                 print("Pkl data loaded")
             except:
                 print("Pkl data procurement failed")
-        def clientDownload(self,shotNum):
+        def clientDownload(self):
             print("Getting data from client for " +self.shotNum)
             try:
                 client = pyuda.Client()
-                self.te   = client.get('/ayc/t_e',shotNum)
+                self.te   = client.get('/ayc/t_e',self.shotNum)
                 print("te downloaded")
-                self.dte  = client.get('/ayc/dt_e',shotNum)
+                self.dte  = client.get('/ayc/dt_e',self.shotNum)
                 print("dte downloaded")
-                self.ne   = client.get('/ayc/n_e',shotNum)
+                self.ne   = client.get('/ayc/n_e',self.shotNum)
                 print("ne downloaded")
-                self.dne  = client.get('/ayc/dn_e',shotNum)
+                self.dne  = client.get('/ayc/dn_e',self.shotNum)
                 print("dne downloaded")
-                self.r    = client.get('/ayc/r',shotNum)
+                self.r    = client.get('/ayc/r',self.shotNum)
                 print("r downloaded")
-                self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',shotNum)
+                self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',self.shotNum)
                 print("psinprof downloaded")
-                self.rprof     = client.get('epm/output/radialprofiles/R',shotNum)
+                self.rprof     = client.get('epm/output/radialprofiles/R',self.shotNum)
                 print("rprof downloaded")
                 self.times_ayc = self.te.time.data
                 self.client = True
@@ -77,10 +77,10 @@ class Shot:
         if datatype == "pkl":
             pklDownload(self)
         elif datatype == "client":
-            clientDownload(self, shotNum)
+            clientDownload(self)
         elif datatype == "all":
             pklDownload(self)
-            clientDownload(self, shotNum)
+            clientDownload(self)
         else:
             raise Exception("datatype must be 'pkl,' 'client,' or 'all'")
     def __str__(self):
