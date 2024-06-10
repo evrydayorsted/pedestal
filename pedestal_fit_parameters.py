@@ -139,7 +139,7 @@ for shot in shots:
             times.append(times0[j])
 
 
-#    times = [0.173,0.456]
+    times = [0.173,0.456]
 #    times = [0.3828,0.3889,0.3949]
 
     Aratio     = numpy.zeros(len(times))
