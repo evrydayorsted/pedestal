@@ -35,62 +35,62 @@ def makeAnimation(yvalue, shotNum):
 	(te,dte,ne,dne,r, rprof,psinprof,times_ayc) = getClientData(shotNum)
 	
 	if yvalue == "all":
-		makeAnimation("te", shotNum)
-		makeAnimation("r", shotNum)
-		makeAnimation("ne", shotNum)
+		createAnimation("te", shotNum)
+		createAnimation("r", shotNum)
+		createAnimation("ne", shotNum)
 		return
 	elif yvalue == "te":
-		yparam = te
+		createAnimation(te, shotNum)
 	elif yvalue == "r":
-		yparam = r
+		createAnimation(r, shotNum)
 	elif yvalue == "ne":
-		yparam = ne
+		createAnimation(ne, shotNum)
 	else:
 		return
-	
-	minimum = yparam.data[np.isfinite(yparam.data)].min()
-	maximum = yparam.data[np.isfinite(yparam.data)].max()
-	spread = maximum-minimum
-	# initializing a figure in  
-	# which the graph will be plotted 
-	fig = plt.figure()  
-	   
-	# marking the x-axis and y-axis 
-	
-	axis = plt.axes(xlim =(0, 1.2),  
-		        ylim =(minimum - 0.1*spread, maximum + 0.1*spread),
-			xlabel="Radius (unknown units)",
-			ylabel = yvalue,
-			title = shotNum)
-	  
-	# initializing a frame 
-	pedPlot, = axis.plot([], [], lw = 3)  
-	
-	# data which the line will  
-	# contain (x, y) 
-	def init():  
-	    pedPlot.set_data([], []) 
-	    return pedPlot, 
-	   
-	def animate(i): 
-	    x = np.linspace(0,1,130)
-	    if i<129:
-	    	print(str(i)+"/130", end="\r")
-	    if i==129:
-                print("Done    ", end = "\n")
-	    #update frame
-	    y = yparam.data[i,:]
-	    pedPlot.set_data(x, y) 
-	      
-	    return pedPlot, 
+	def createAnimation(yparam, shotNum):
+		minimum = yparam.data[np.isfinite(yparam.data)].min()
+		maximum = yparam.data[np.isfinite(yparam.data)].max()
+		spread = maximum-minimum
+		# initializing a figure in  
+		# which the graph will be plotted 
+		fig = plt.figure()  
+		
+		# marking the x-axis and y-axis 
+		
+		axis = plt.axes(xlim =(0, 1.2),  
+					ylim =(minimum - 0.1*spread, maximum + 0.1*spread),
+				xlabel="Radius (unknown units)",
+				ylabel = yvalue,
+				title = shotNum)
+		
+		# initializing a frame 
+		pedPlot, = axis.plot([], [], lw = 3)  
+		
+		# data which the line will  
+		# contain (x, y) 
+		def init():  
+			pedPlot.set_data([], [])
+			return pedPlot, 
+		
+		def animate(i): 
+			x = np.linspace(0,1,130)
+			if i<129:
+				print(str(i)+"/130", end="\r")
+			if i==129:
+				print("Done    ", end = "\n")
+			#update frame
+			y = yparam.data[i,:]
+			pedPlot.set_data(x, y) 
+			
+			return pedPlot, 
 
-	anim = animation.FuncAnimation(fig, animate, init_func = init, 
-		             frames = 175, interval = 20, blit = True,
-				repeat=False) 
-	fig.canvas.draw()
-	anim.event_source.stop()
-	   
-	anim.save(str(shotNum)+yvalue+'.mp4', writer = 'ffmpeg', fps = 22)
+		anim = animation.FuncAnimation(fig, animate, init_func = init, 
+						frames = 175, interval = 20, blit = True,
+					repeat=False) 
+		fig.canvas.draw()
+		anim.event_source.stop()
+		
+		anim.save(str(shotNum)+yvalue+'.mp4', writer = 'ffmpeg', fps = 22)
 	
 
 def loadpkl(shotNum):
