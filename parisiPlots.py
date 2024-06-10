@@ -6,9 +6,11 @@ import pyuda
 import numpy
 import scipy
 import pickle
+from importlib import reload
+
 
 def getClientData(shot):
-	print("getting data for" +str(shot))
+	print("getting data for " +str(shot))
 	client = pyuda.Client()
 	te   = client.get('/ayc/t_e',shot)
 	print("te downloaded")
@@ -31,23 +33,12 @@ def getClientData(shot):
 	return (te,dte,ne,dne,r, rprof, psinprof,times_ayc)
 
 def makeAnimation(yvalue, shotNum):
-	#don't want to have to reload each time
-	(te,dte,ne,dne,r, rprof,psinprof,times_ayc) = getClientData(shotNum)
-	
-	if yvalue == "all":
-		createAnimation("te", shotNum)
-		createAnimation("r", shotNum)
-		createAnimation("ne", shotNum)
-		return
-	elif yvalue == "te":
-		createAnimation(te, shotNum)
-	elif yvalue == "r":
-		createAnimation(r, shotNum)
-	elif yvalue == "ne":
-		createAnimation(ne, shotNum)
-	else:
-		return
-	def createAnimation(yparam, shotNum):
+	'''Creates animation of yvalue ("te", "ne", "r", or "all") vs
+	radius across time for shot number shotNum. Saves to files.'''
+	def createAnimation(yvalue, yparam, shotNum):
+		'''Helper function which creates animation of yparam vs
+		radius across time for shot number shotNum. yvalue is 
+		the string representation of yparam.'''
 		minimum = yparam.data[np.isfinite(yparam.data)].min()
 		maximum = yparam.data[np.isfinite(yparam.data)].max()
 		spread = maximum-minimum
@@ -59,9 +50,9 @@ def makeAnimation(yvalue, shotNum):
 		
 		axis = plt.axes(xlim =(0, 1.2),  
 					ylim =(minimum - 0.1*spread, maximum + 0.1*spread),
-				xlabel="Radius (unknown units)",
+				xlabel="Radius (m?)",
 				ylabel = yvalue,
-				title = shotNum)
+				title = "Shot "+str(shotNum)+": "+yvalue+" vs. Radius")
 		
 		# initializing a frame 
 		pedPlot, = axis.plot([], [], lw = 3)  
@@ -90,9 +81,23 @@ def makeAnimation(yvalue, shotNum):
 		fig.canvas.draw()
 		anim.event_source.stop()
 		
-		anim.save(str(shotNum)+yvalue+'.mp4', writer = 'ffmpeg', fps = 22)
+		anim.save('animations/'+str(shotNum)+yvalue+'.mp4', writer = 'ffmpeg', fps = 22)
+		print("Saved " + str(shotNum)+yvalue+'.mp4 in animations')
+	(te,dte,ne,dne,r, rprof,psinprof,times_ayc) = getClientData(shotNum)
 	
-
+	if yvalue == "all":
+		createAnimation("te",te, shotNum)
+		createAnimation("r",r, shotNum)
+		createAnimation("ne",ne, shotNum)
+		return
+	elif yvalue == "te":
+		createAnimation("te",te, shotNum)
+	elif yvalue == "r":
+		createAnimation("r",r, shotNum)
+	elif yvalue == "ne":
+		createAnimation("ne",ne, shotNum)
+	else:
+		return
 def loadpkl(shotNum):
 	#download pkl\
 	if shotNum == "all":
