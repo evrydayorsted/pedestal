@@ -1,10 +1,7 @@
 import matplotlib.animation as animation
-from numpy import array, linspace
 import matplotlib.pyplot as plt
 import numpy as np
 import pyuda
-import numpy
-import scipy
 import pickle
 from importlib import reload
 

@@ -1,4 +1,4 @@
-import numpy as np
+import numpy
 import matplotlib.pyplot as plt
 import pickle
 from contourplot import *
@@ -6,9 +6,9 @@ from   matplotlib import rc
 from   matplotlib.ticker import MultipleLocator
 import copy
 
-def loadpkl():
+def loadpkl(shotNum):
     #download pkl
-    filename = 'output/MAST-U_pedestal_'+str(48136)+'.pkl'
+    filename = 'output/MAST-U_pedestal_'+str(shotNum)+'.pkl'
     infile = open(filename, 'rb')
     pkldata = pickle.load(infile)
     infile.close()
@@ -55,7 +55,7 @@ def loadpkl():
     elong  = pkldata['elong']
     delta = pkldata['delta']
 
-loadpkl()
+loadpkl(48136)
 
 def setupfigure(figurenumber,xsize,ysize):
     figurename = plt.figure(figurenumber,figsize=(xsize,ysize),
@@ -148,17 +148,17 @@ def makefigure(*args):
         plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
         plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
 
-    #plt.savefig(outfilename+'.pdf')
+    plt.savefig(outfilename+'.pdf')
     plt.show()
 #    plt.close()
 
 
 
 
-def contourPlot(plotnumber):
+def contourPlot(plotnumber, shotNum):
     # Beta vs. Delta
     #download pkl
-    filename = 'output/MAST-U_pedestal_'+str(48136)+'.pkl'
+    filename = 'output/MAST-U_pedestal_'+str(shotNum)+'.pkl'
     infile = open(filename, 'rb')
     pkldata = pickle.load(infile)
     infile.close()
@@ -322,7 +322,7 @@ def contourPlot(plotnumber):
         yticks       = 3
         yminor       = 0.05
         ysize        = 60
-
+    outfilename = "shotNum" + outfilename
     args = [plotnumber,outfilename,
             xquantity,xlabel,x1,x2,xticks,xminor,xsize,
             yquantity,ylabel,y1,y2,yticks,yminor,ysize]
