@@ -138,7 +138,7 @@ def makefigure(*args):
     plt.subplots_adjust(left=0.20,right = 0.90,bottom=0.20,top=0.92)
     # This provides a square plot area with a 5in by 6in figure area and the colorbar on the right
 
-    if plotnumber == 1:
+    if number == 1:
         x_width = numpy.linspace(x1,x2,100)
         y_beta  = (x_width/0.43)**(1.0/1.03)
         y_beta2 = (x_width/0.08)**(2.0)
@@ -148,7 +148,7 @@ def makefigure(*args):
         plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
         plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
 
-    plt.savefig(outfilename+'.pdf')
+    plt.savefig("plots/"+outfilename+'.pdf')
     plt.show()
 #    plt.close()
 
@@ -162,6 +162,8 @@ def contourPlot(plotnumber, shotNum):
     infile = open(filename, 'rb')
     pkldata = pickle.load(infile)
     infile.close()
+    global number
+    number = plotnumber
     global outfilename
     global xquantity
     global xlabel
@@ -170,7 +172,13 @@ def contourPlot(plotnumber, shotNum):
     global xticks
     global xminor
     global xsize
-
+    global yquantity
+    global ylabel
+    global y1
+    global y2
+    global yticks
+    global yminor
+    global ysize
     if plotnumber == 1:
 
         outfilename = "betavsdelta"
@@ -322,7 +330,7 @@ def contourPlot(plotnumber, shotNum):
         yticks       = 3
         yminor       = 0.05
         ysize        = 60
-    outfilename = "shotNum" + outfilename
+    outfilename = shotNum + outfilename
     args = [plotnumber,outfilename,
             xquantity,xlabel,x1,x2,xticks,xminor,xsize,
             yquantity,ylabel,y1,y2,yticks,yminor,ysize]
