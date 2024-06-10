@@ -1,0 +1,23 @@
+"""
+"""
+
+
+# Imports
+from numpy import array, linspace
+import matplotlib.pyplot as plt
+import pyuda
+import numpy
+import scipy
+import pickle
+
+
+client = pyuda.Client()
+
+shot = 48340
+te   = client.get('/ayc/t_e',shot)
+dte  = client.get('/ayc/dt_e',shot)
+ne   = client.get('/ayc/n_e',shot)
+dne  = client.get('/ayc/dn_e',shot)
+r    = client.get('/ayc/r',shot)
+
+times_ayc = te.time.data
