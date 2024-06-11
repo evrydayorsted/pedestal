@@ -93,8 +93,8 @@ class Shot:
     def __str__(self):
         return f"{self.shotNum}" 
     def fit(self, printtimes= False, plotvstime = False, printquantities = False,
-        plotvsradius = False, plotvspsin = True, savepklforshot = False,
-        presetTimes= [], savefigure = True, showfigure = True):
+	    plotvsradius = False, plotvspsin = True, savepklforshot = False,
+	    presetTimes= [], savefigure = True, showfigure = True):
         shot = self.shotNum
         group = "/apf/core/mtanh/lfs/"
         client = pyuda.Client()
@@ -530,7 +530,7 @@ class Shot:
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
-    def contourPlot(self, plotnumber, savefigure=True, plotfigure=True):
+    def contourPlot(self, plotnumber, savefigure=True, showfigure=True):
         '''1 for Beta vs. Delta\n
        2 for Te,ped vs. Delta_te\n
        3 for ne,ped vs. Delta_ne\n
@@ -627,7 +627,7 @@ class Shot:
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
         if savefigure:
             plt.savefig("plots/"+outfilename+'.pdf')
-        if plotfigure:
+        if showfigure:
             plt.show()
         #    plt.close()
 
@@ -790,7 +790,7 @@ class Shot:
                 yquantity,ylabel,y1,y2,yticks,yminor,ysize]
 
         makefigure(*args)
-    def makeAnimation(self, yvalue):
+    def makeAnimation(self, yvalue, saveanim = True):
         '''Creates animation of yvalue ("te", "ne", "r", or "all") vs
         radius across time for shot number shotNum. Saves to files.'''
         if self.shotNum == "allShots":
@@ -843,9 +843,9 @@ class Shot:
                         repeat=False) 
             fig.canvas.draw()
             anim.event_source.stop()
-            
-            anim.save('animations/'+self.shotNum+yvalue+'.mp4', writer = 'ffmpeg', fps = 22)
-            print("Saved " + self.shotNum+yvalue+'.mp4 in animations')
+            if saveanim:
+                anim.save('animations/'+self.shotNum+yvalue+'.mp4', writer = 'ffmpeg', fps = 22)
+                print("Saved " + self.shotNum+yvalue+'.mp4 in animations')
         
         
         if yvalue == "all":
