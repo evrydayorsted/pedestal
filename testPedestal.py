@@ -7,7 +7,10 @@ import copy
 import matplotlib
 import matplotlib.animation as animation
 import numpy as np
-from pedinf.models import mtanh
+try:
+    from pedinf.models import mtanh
+except:
+    print("pedinf connection failed")
 import scipy
 
 try:
@@ -88,14 +91,9 @@ class Shot:
             raise Exception("datatype must be 'pkl,' 'client,' or 'all'")
     def __str__(self):
         return f"{self.shotNum}" 
-    def fit(self):
+    def fit(self, printtimes= False, plotvstime = False, printquantities = False,
+            plotvsradius = False, plotvspsin = True, savepklforshot = False, presetTimes= []):
         shot = self.shotNum
-        printtimes      = False
-        plotvstime      = False
-        printquantities = False
-        plotvsradius    = False
-        plotvspsin      = True
-        savepklforshot  = False
         group = "/apf/core/mtanh/lfs/"
         client = pyuda.Client()
 
@@ -201,8 +199,9 @@ class Shot:
             if len(index)  > 2:
                 times.append(times0[j])
 
-
-        times = [0.173,0.456]
+        if presetTimes != []:
+            times = presetTimes
+        #times = [0.173,0.456]
     #    times = [0.3828,0.3889,0.3949]
 
         Aratio     = numpy.zeros(len(times))
