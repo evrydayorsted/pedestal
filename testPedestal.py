@@ -7,6 +7,7 @@ import copy
 import matplotlib
 import matplotlib.animation as animation
 import numpy as np
+import matplotlib.cm
 try:
     from pedinf.models import mtanh
 except:
@@ -410,6 +411,7 @@ class Shot:
                 ax3.tick_params(axis='y',labelsize=fs)
 
                 plt.tight_layout()
+                plt.savefig("plots/"+self.shotNum+"_"+str(time*100)+"_"+"plotvsradius.png")
                 plt.show()
 
 
@@ -476,6 +478,8 @@ class Shot:
                 ax3.tick_params(axis='y',labelsize=fs)
 
                 plt.tight_layout()
+                plt.savefig("plots/"+self.shotNum+"_"+str(time*100)+"_"+"plotvspsin.png")
+
                 plt.show()
 
                 
@@ -598,7 +602,7 @@ class Shot:
                             aspect='auto',
                             vmin=0.0,vmax=2.0)    
             cbar = plt.colorbar(CS,ticks=[0.0,1.0,2.0])#,3.0])
-            cmap = copy.copy(matplotlib.colormaps.get_cmap('viridis'))
+            cmap = copy.copy(matplotlib.cm.get_cmap('viridis'))
             cmap.set_under(color='white')
             cmap.set_bad(color='white')
             plt.set_cmap(cmap)
@@ -818,11 +822,12 @@ class Shot:
             
             def animate(i): 
                 x = np.linspace(0,1,130)
-                if i<129:
-                    print(str(i)+"/130", end="\r")
-                if i==129:
+                if i<175:
+                    print(str(i)+"/175", end="\r")
+                if i==175:
                     print("Done    ", end = "\n")
                 #update frame
+                
                 y = yparam.data[i,:]
                 pedPlot.set_data(x, y) 
                 
