@@ -93,7 +93,8 @@ class Shot:
     def __str__(self):
         return f"{self.shotNum}" 
     def fit(self, printtimes= False, plotvstime = False, printquantities = False,
-            plotvsradius = False, plotvspsin = True, savepklforshot = False, presetTimes= []):
+        plotvsradius = False, plotvspsin = True, savepklforshot = False,
+        presetTimes= [], savefigure = True, showfigure = True):
         shot = self.shotNum
         group = "/apf/core/mtanh/lfs/"
         client = pyuda.Client()
@@ -411,8 +412,10 @@ class Shot:
                 ax3.tick_params(axis='y',labelsize=fs)
 
                 plt.tight_layout()
-                plt.savefig("plots/"+self.shotNum+"_"+str(time*100)+"_"+"plotvsradius.png")
-                plt.show()
+                if savefigure:
+		  plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotvsradius.png")
+                if showfigure:
+		  plt.show()
 
 
             if plotvspsin:
@@ -478,9 +481,10 @@ class Shot:
                 ax3.tick_params(axis='y',labelsize=fs)
 
                 plt.tight_layout()
-                plt.savefig("plots/"+self.shotNum+"_"+str(time*100)+"_"+"plotvspsin.png")
-
-                plt.show()
+                if savefigure:
+		  plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotvspsin.png")
+		if showfigure:
+		  plt.show()
 
                 
         if plotvstime:
@@ -526,7 +530,7 @@ class Shot:
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
-    def contourPlot(self, plotnumber):
+    def contourPlot(self, plotnumber, savefigure=True, plotfigure=True):
         '''1 for Beta vs. Delta\n
        2 for Te,ped vs. Delta_te\n
        3 for ne,ped vs. Delta_ne\n
@@ -621,9 +625,10 @@ class Shot:
                 #plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
-
-            plt.savefig("plots/"+outfilename+'.pdf')
-            plt.show()
+	    if savefigure:
+	      plt.savefig("plots/"+outfilename+'.pdf')
+	    if plotfigure:
+	      plt.show()
         #    plt.close()
 
         # Beta vs. Delta
