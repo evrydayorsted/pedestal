@@ -413,9 +413,9 @@ class Shot:
 
                 plt.tight_layout()
                 if savefigure:
-		  plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotvsradius.png")
+                    plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotvsradius.png")
                 if showfigure:
-		  plt.show()
+                    plt.show()
 
 
             if plotvspsin:
@@ -482,9 +482,9 @@ class Shot:
 
                 plt.tight_layout()
                 if savefigure:
-		  plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotvspsin.png")
-		if showfigure:
-		  plt.show()
+                    plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotvspsin.png")
+                if showfigure:
+                    plt.show()
 
                 
         if plotvstime:
@@ -625,10 +625,10 @@ class Shot:
                 #plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
-	    if savefigure:
-	      plt.savefig("plots/"+outfilename+'.pdf')
-	    if plotfigure:
-	      plt.show()
+        if savefigure:
+            plt.savefig("plots/"+outfilename+'.pdf')
+        if plotfigure:
+            plt.show()
         #    plt.close()
 
         # Beta vs. Delta
@@ -747,7 +747,7 @@ class Shot:
 
             outfilename = "nevswr"
 
-            xquantity    = sefl.W_ped_radius_ne
+            xquantity    = self.W_ped_radius_ne
             xlabel       = r'$W_{\mathrm{ped,ne}}$ (m)'
             x1           = 0.0
             x2           = 0.09
