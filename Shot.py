@@ -587,8 +587,7 @@ class Shot:
                     index, = np.where((xquantity>=xx[i])   & 
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
-                                        (yquantity< yy[j+1]) &
-                                        (self.delta<np.mean(self.delta)-np.std(self.delta)))
+                                        (yquantity< yy[j+1]))
                     Ntot[i,j]   = len(index)
 
 
@@ -626,10 +625,10 @@ class Shot:
                 #plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
-        if savefigure:
-            plt.savefig("plots/"+outfilename+'.pdf')
-        if showfigure:
-            plt.show()
+            if savefigure:
+                plt.savefig("plots/"+outfilename+'.png')
+            if showfigure:
+                plt.show()
         #    plt.close()
 
         # Beta vs. Delta
@@ -785,6 +784,51 @@ class Shot:
             yticks       = 3
             yminor       = 0.05
             ysize        = 60
+        # A vs kappa
+
+        if plotnumber == 8:
+
+            outfilename = "Avskappa"
+
+            xquantity    = self.Aratio
+            xlabel       = r'Aspect ratio'
+            x1           = 1.2
+            x2           = 2.4
+            xticks       = 4
+            xminor       = 0.1
+            xsize        = 60
+
+            yquantity    = self.elong
+            ylabel       = r'$\kappa$'
+            y1           = 1.0
+            y2           = 3.0
+            yticks       = 4
+            yminor       = 0.05
+            ysize        = 60
+
+        # A vs delta
+
+        if plotnumber == 9:
+
+            outfilename = "Avsdelta"
+
+            xquantity    = self.Aratio
+            xlabel       = r'Aspect ratio'
+            x1           = 1
+            x2           = 3
+            xticks       = 4
+            xminor       = 0.1
+            xsize        = 60
+
+            yquantity    = self.delta
+            ylabel       = r'$\delta$ - Triangularity'
+            y1           = -0.1
+            y2           = 0.75
+            yticks       = 4
+            yminor       = 0.05
+            ysize        = 60
+
+
         outfilename = str(self.shotNum) + outfilename
         args = [plotnumber,outfilename,
                 xquantity,xlabel,x1,x2,xticks,xminor,xsize,
