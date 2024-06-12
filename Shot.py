@@ -606,7 +606,7 @@ class Shot:
                             aspect='auto',
                             vmin=0.0,vmax=2.0)    
             cbar = plt.colorbar(CS,ticks=[0.0,1.0,2.0])#,3.0])
-            cmap = copy.copy(matplotlib.cm.get_cmap('viridis'))
+            cmap = copy.copy(matplotlib.colormaps.get_cmap('viridis'))
             cmap.set_under(color='white')
             cmap.set_bad(color='white')
             plt.set_cmap(cmap)
@@ -787,7 +787,7 @@ class Shot:
         outfilename = str(self.shotNum) + outfilename
         args = [plotnumber,outfilename,
                 xquantity,xlabel,x1,x2,xticks,xminor,xsize,
-                yquantity,ylabel,y1,y2,yticks,yminor,ysize]
+                yquantity,ylabel,y1,y2,yticks,yminor,ysize, self]
 
         makefigure(*args)
     def makeAnimation(self, yvalue, saveanim = True):
