@@ -587,7 +587,8 @@ class Shot:
                     index, = np.where((xquantity>=xx[i])   & 
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
-                                        (yquantity< yy[j+1]))
+                                        (yquantity< yy[j+1]) &
+                                        (yquantity>0.75*xquantity))
                     Ntot[i,j]   = len(index)
 
 
@@ -622,6 +623,7 @@ class Shot:
                 y_beta2 = (x_width/0.08)**(2.0)
                 plt.plot(x_width,y_beta,color='red',linestyle='--')
                 plt.plot(x_width,y_beta2,color='magenta',linestyle='--')
+                plt.plot(x_width, 3/4*x_width, color="blue")
                 #plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
                 plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
@@ -827,6 +829,29 @@ class Shot:
             yticks       = 4
             yminor       = 0.05
             ysize        = 60
+        
+        #free slot
+
+        if plotnumber == 10:
+
+            outfilename = "0.75linearFilterLMode"
+
+            xquantity    = self.W_ped
+            xlabel       = r'$\Delta_{\mathrm{ped}}$'
+            x1           = 0.0
+            x2           = 0.2
+            xticks       = 4
+            xminor       = 0.025
+            xsize        = 60
+
+            yquantity    = self.Beta_ped
+            ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
+            y1           = 0.0
+            y2           = 0.35
+            yticks       = 7
+            yminor       = 0.025
+            ysize        = 60
+
 
 
         outfilename = str(self.shotNum) + outfilename
