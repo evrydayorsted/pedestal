@@ -587,7 +587,8 @@ class Shot:
                     index, = np.where((xquantity>=xx[i])   & 
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
-                                        (yquantity< yy[j+1]))
+                                        (yquantity< yy[j+1]) &
+                                        (self.delta<np.mean(self.delta)-np.std(self.delta)))
                     Ntot[i,j]   = len(index)
 
 
