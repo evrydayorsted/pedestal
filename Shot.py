@@ -24,18 +24,27 @@ except:
 from importlib import reload
 
 class Shot:
+    '''Parameters (shotNum {# or 'allShots'}, datatype {'pkl', 'client', 'all'})'''
     def __init__(self, shotNum, datatype):
+
+        # Save shotNum as a string so it can be used in filenames
         self.shotNum = str(shotNum)
+
+        # Initialize data pull instructions
         self.pkl = False
         self.client = False
+
+        # Define functions to pull data
         def pklDownload(self):
+            '''Function to pull data from pkl file 
+            Pathname of pkl should have form:  'output/MAST_U_pedestal_48339.pkl' or
+                                               'output/MAST_U_pedestal_allShots.pkl' '''
             try:
                 #download pkl
                 filename = 'output/MAST-U_pedestal_'+self.shotNum+'.pkl'
                 infile = open(filename, 'rb')
                 pkldata = pickle.load(infile)
                 infile.close()
-
                 
                 #read off values
                 self.shot = pkldata['Shot']
@@ -61,7 +70,9 @@ class Shot:
                 print("Pkl data loaded")
             except:
                 print("Pkl data procurement failed")
+
         def clientDownload(self):
+            '''Function to pull data from client. Should only be used for a single shot.'''
             print("Getting data from client for " +self.shotNum)
             try:
                 client = pyuda.Client()
@@ -84,6 +95,8 @@ class Shot:
                 print("All data downloaded from client")
             except:
                 print("Client connection failed.")
+
+        # Run the appropriate data pulls
         if datatype == "pkl":
             pklDownload(self)
         elif datatype == "client":
@@ -93,12 +106,26 @@ class Shot:
             clientDownload(self)
         else:
             raise Exception("datatype must be 'pkl,' 'client,' or 'all'")
+        
     def __str__(self):
+        '''Define string representation'''
         return f"{self.shotNum}" 
+    
     def fit(self, printtimes= False, plotvstime = False, printquantities = False,
 	    plotvsradius = False, plotvspsin = True, savepklforshot = False,
 	    presetTimes= [], savefigure = True, showfigure = True):
+        '''Pulls automatic fitting data for the given shot. Can print the time of each plot
+        (printtimes). Automatically fits all time slices of a given shot, unless presetTimes is 
+        given as a list of time points in seconds. Default is to plot vs psi_n (plotvspsin), but
+        can also plot against radius (plotvsradius) or time (plotvstime). Figure can be saved (savefigure)
+        or shown (showfigure), which are both default true. Data can also be exported as a pkl (savepklforshot).
+        
+        Adapted from pedestal_fit_parameters Jack Berkery 2023'''
+
+        # Defining shot based off of class instance
         shot = self.shotNum
+
+        # Pull fit data from client
         group = "/apf/core/mtanh/lfs/"
         client = pyuda.Client()
 
@@ -122,6 +149,7 @@ class Shot:
         pe_ped_top_grad = client.get(group + "p_e/pedestal_top_gradient", shot)
         pe_background   = client.get(group + "p_e/background_level", shot)
         print("done parameters")
+
         # group the temperature and density parameters together so it's easy
         # to pass them into the model:
         te_parameters = np.array([
@@ -185,6 +213,7 @@ class Shot:
         psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
         psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
         print('done efit')
+
         ultimatemintime = 0.1
         mintime   = numpy.max([numpy.min(times_apf),numpy.min(times_epm),ultimatemintime])
         maxtime   = numpy.min([numpy.max(times_apf),numpy.max(times_epm)])
@@ -194,18 +223,22 @@ class Shot:
 
         # First check if the rprof data from epm is good (at least two points > rmaxis exist). This filters out if rprof is all nans
         
+        # Set up times array
         times = []
         
-        for j in range(0,len(times0)):
-
-            test_index_apf = numpy.argmin(abs(times_apf-times0[j]))
-            test_index_epm = numpy.argmin(abs(times_epm-times_apf[test_index_apf]))
-            index          = numpy.where(rprof.data[test_index_epm]>rmaxis.data[test_index_epm])[0]
-            if len(index)  > 2:
-                times.append(times0[j])
-
         if presetTimes != []:
             times = presetTimes
+        else:
+            for j in range(0,len(times0)):
+
+                test_index_apf = numpy.argmin(abs(times_apf-times0[j]))
+                test_index_epm = numpy.argmin(abs(times_epm-times_apf[test_index_apf]))
+                index          = numpy.where(rprof.data[test_index_epm]>rmaxis.data[test_index_epm])[0]
+                if len(index)  > 2:
+                    times.append(times0[j])
+
+
+        # Some default time slices
         #times = [0.173,0.456]
     #    times = [0.3828,0.3889,0.3949]
 
@@ -230,6 +263,7 @@ class Shot:
         W_ped_radius_pe  = numpy.zeros(len(times))
         H_ped_radius_pe  = numpy.zeros(len(times))
 
+        # For each time slice
         for i in range(0,len(times)):
             
             time = times[i]
@@ -533,6 +567,9 @@ class Shot:
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
+
+
+
     def contourPlot(self, plotnumber, savefigure=True, showfigure=True, fitHMode=False, plotName = "default"):
         '''1 for Beta vs. Delta\n
        2 for Te,ped vs. Delta_te\n
@@ -540,10 +577,18 @@ class Shot:
        4 for pe,ped vs. Delta_pe\n
        5 for  te,ped,r vs. W_r_te\n
        6 for ne,ped,r vs. W_r_ne\n
-       7 for pe,ped,r vs. W_r_pe'''
+       7 for pe,ped,r vs. W_r_pe]
+       
+       Generates a contour plot that can be saved (savefigure) and/or shown (showfigure). The Hmode points can be
+       fitted in Beta vs Delta plots (fitHMode), and the plotName can be set (otherwise defaults to shot 
+       number and the type of contour plot).
+       Adapted from Jack Berkery contourPlot 2024'''
+        
+        # Data for contour is pulled from a pkl
         if not self.pkl:
             raise Exception("Must have pkl data to run contourPlot")
         def setupfigure(figurenumber,xsize,ysize):
+            '''Setup plotspace'''
             figurename = plt.figure(figurenumber,figsize=(xsize,ysize),
                                     edgecolor='white')
             matplotlib.rcParams['xtick.major.pad'] = 8
@@ -551,6 +596,7 @@ class Shot:
             return figurename
         def setupframe(framecolumns,framerows,position,x1,x2,y1,y2,numberofxticks,
                     numberofyticks,xlabel,ylabel,xminor,yminor,font_size):
+            '''Setup plot'''
             framename = plt.subplot(framerows,framecolumns,position)
             plt.axis([x1,x2,y1,y2])
             xtickarray = []
@@ -573,7 +619,7 @@ class Shot:
                 framename.axes.yaxis.set_minor_locator(MultipleLocator(yminor))
             return framename
         def makefigure(*args):
-
+            '''Generates contour plot'''
             figure1 = setupfigure(1,6.0,5.0)
             font_size = 20
 
@@ -585,8 +631,10 @@ class Shot:
 
             Ntot   = np.zeros((len(xx)-1,len(yy)-1))
 
+            # Counts number of points that lie within each bin
             for i in range(0,len(xx)-1):
                 for j in range(0,len(yy)-1):
+                    #Can add additional conditions here to filter what is shown in contour
                     index, = np.where((xquantity>=xx[i])   & 
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
@@ -622,24 +670,33 @@ class Shot:
                 x_width = np.linspace(x1,x2,100)
                 y_beta  = (x_width/0.43)**(1.0/1.03)
                 y_beta2 = (x_width/0.08)**(2.0)
+
+                #Plots some predictive models on top of contour plot
                 #plt.plot(x_width,y_beta,color='red',linestyle='--')
                 #plt.plot(x_width,y_beta2,color='magenta',linestyle='--')
                 #plt.plot(x_width, 3/4*x_width, color="blue")
                 #plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
                 #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
                 #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
+                
+                #Provides a fit to the HMode data
                 if fitHMode:
                     validXQuantity = np.array([])
                     validYQuantity = np.array([])
+
                     for i in range(len(xquantity)):
+                        #filters which data points to fit
                         if((x1<xquantity[i]<x2) and 
                         (y1<yquantity[i]<y2) and 
+                        # right now, Lmode is considered to be below a horizontal line with slope 0.75 (in BetavsDelta)
                         (yquantity[i]>0.75*xquantity[i])):
                             validXQuantity = np.append(validXQuantity,xquantity[i])
                             validYQuantity = np.append(validYQuantity, yquantity[i])
                 #    plt.close()
                     # Define the function to fit.
                     # The first parameter is the independent variable. # The remaining parameters␣are the fit parameters.
+                    
+                    # Function to fit
                     def curve(x,m):
                         return  m*x
                     # Do the fit. Read the help on curve_fit!
@@ -654,7 +711,11 @@ class Shot:
                     #plt.plot(xquantity, yquantity, "o", label="data", color="black")
                     # There are many ways to plot the line given a and b, but here’s one:
                     yfit = curve(x_width, *popt) # * passes a list as remaining function parameters
+
+                    # plots the fit curve
                     plt.plot(x_width, yfit,label=f"fit - {popt[0]}$\pm${perr[0]} $\delta$", color="black")
+
+                    #Plots the points that were fitted
                     plt.plot(validXQuantity, validYQuantity, ".", markersize = 0.5, color="red")
                     plt.legend()
                     # savefig("hw1_meaningful_file_name.pdf")
