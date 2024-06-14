@@ -189,9 +189,16 @@ class Shot:
         print('done thomson')
         # EPM: EFIT++
 
+        #neutral beam, Ip, toroidal magnetic field, stored energy, beta_N
+
         Ip        = client.get('epm/output/globalParameters/plasmacurrent',shot)
         times_epm = Ip.time.data
+        #toroidal magnetic field (at axis)
         Btor      = client.get('epm/output/globalParameters/bphirmag',shot)
+        betaN      = client.get('epm/output/globalParameters/betan',shot)
+        # storedEnergy (joules)
+        plasmaEnergy      = client.get('epm/output/globalParameters/plasmaEnergy',shot)
+
         rmaxis    = client.get('epm/output/globalParameters/magneticAxis/R',shot)
         zmaxis    = client.get('epm/output/globalParameters/magneticAxis/Z',shot)
         rbdy      = client.get('epm/output/separatrixGeometry/rboundary',shot)
@@ -213,7 +220,8 @@ class Shot:
         psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
         psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
         print('done efit')
-
+        #in megawatts
+        total_NBI_power = client.get('anb/sum/power', shot)
         ultimatemintime = 0.1
         mintime   = numpy.max([numpy.min(times_apf),numpy.min(times_epm),ultimatemintime])
         maxtime   = numpy.min([numpy.max(times_apf),numpy.max(times_epm)])
@@ -570,7 +578,8 @@ class Shot:
 
 
 
-    def contourPlot(self, plotnumber, savefigure=True, showfigure=True, fitHMode=False, plotName = "default"):
+    def contourPlot(self, plotnumber, savefigure=True, showfigure=True, fitHMode=False, plotName = "default", numPix = 60,
+                    cbarMax =2, cbarMin=0, numMin = 0, countType = "count"):
         '''1 for Beta vs. Delta\n
        2 for Te,ped vs. Delta_te\n
        3 for ne,ped vs. Delta_ne\n
@@ -581,7 +590,10 @@ class Shot:
        
        Generates a contour plot that can be saved (savefigure) and/or shown (showfigure). The Hmode points can be
        fitted in Beta vs Delta plots (fitHMode), and the plotName can be set (otherwise defaults to shot 
-       number and the type of contour plot).
+       number and the type of contour plot). Can change number of pixels with numPix. Set max of log scale (cbarMax).
+       Or min of colorbar (cbarMin). Can set minimum number of points for pixel to show up (numMin).
+       countType determines how the plot is colored ('count', 'elong', 'delta', ...).
+
        Adapted from Jack Berkery contourPlot 2024'''
         
         # Data for contour is pulled from a pkl
@@ -639,13 +651,25 @@ class Shot:
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
                                         (yquantity< yy[j+1]))
-                    Ntot[i,j]   = len(index)
-            
-            zeroindex = np.where(Ntot == 0.0)
-            Ntot[zeroindex] = 1.0e-10
-            zz = np.transpose(np.log10(Ntot))
+                    if len(index) > numMin:
+                        if countType == "count":
+                            Ntot[i,j] = np.log10(len(index))
+                        elif countType == 'elong':
+                            Ntot[i,j]   = np.mean(self.elong[index])
+                        elif countType == "delta":
+                            Ntot[i,j] = np.mean(self.delta[index])
+                        elif countType == "time":
+                            Ntot[i,j] = np.mean(self.times[index])
+                        elif countType == "aratio":
+                            Ntot[i,j] = np.mean(self.Aratio[index])
+            if (countType =="count"):
+                zeroindex = np.where(Ntot == 0.0)
+                Ntot[zeroindex] = 1.0e-10
+            elif (countType == "time"):
+                zeroindex = np.where(Ntot == 0.0)
+                Ntot[zeroindex] = -1.0e-10
+            zz = np.transpose(Ntot)
 
-        #    print(zz)
 
             frame1 = setupframe(1,1,1,x1,x2,y1,y2,
                                 xticks,yticks,xlabel,
@@ -654,14 +678,26 @@ class Shot:
             CS = plt.imshow(zz,extent=(x1,x2,y1,y2),origin='lower',
                             interpolation='none',
                             aspect='auto',
-                            vmin=0.0,vmax=2.0)    
-            cbar = plt.colorbar(CS,ticks=[0.0,1.0,2.0])#,3.0])
-            cmap = copy.copy(matplotlib.colormaps.get_cmap('viridis'))
+                            vmin=cbarMin,vmax=cbarMax)    
+            cbar = plt.colorbar(CS,ticks=[cbarMin, (cbarMax-cbarMin)/2+cbarMin, cbarMax])#,3.0])
+            cmap = copy.copy(matplotlib.colormaps.get_cmap('rainbow'))
             cmap.set_under(color='white')
             cmap.set_bad(color='white')
             plt.set_cmap(cmap)
-            cbar.ax.set_yticklabels(['0.0','1.0','2.0'],fontsize=font_size)#,'3.0'],fontsize=font_size)
-            cbar.ax.set_ylabel('Log$_{10}$ (Number of equilibria)',fontsize=font_size)
+            cbar.ax.set_yticklabels([str(cbarMin), str(np.round((cbarMax-cbarMin)/2+cbarMin, 3)),str(cbarMax)],fontsize=font_size)#,'3.0'],fontsize=font_size)
+            if countType=="count":
+                cbar.ax.set_ylabel('Log$_{10}$ (Number of equilibria)',fontsize=font_size)
+            elif countType =="elong":
+                cbar.ax.set_ylabel(r'Avg. $\kappa$',fontsize=font_size)
+            elif countType == "delta":
+                cbar.ax.set_ylabel(r'Avg. $\delta$',fontsize=font_size)
+            elif countType == "time":
+                cbar.ax.set_ylabel(r'Avg. Time',fontsize=font_size)
+            elif countType == "aratio":
+                cbar.ax.set_ylabel(r'Aspect Ratio',fontsize=font_size)
+
+
+
 
             plt.subplots_adjust(left=0.20,right = 0.90,bottom=0.20,top=0.92)
             # This provides a square plot area with a 5in by 6in figure area and the colorbar on the right
@@ -739,7 +775,7 @@ class Shot:
             x2           = 0.2
             xticks       = 4
             xminor       = 0.025
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.Beta_ped
             ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
@@ -747,7 +783,7 @@ class Shot:
             y2           = 0.35
             yticks       = 7
             yminor       = 0.025
-            ysize        = 60
+            ysize        = numPix
 
         # Te,ped vs. Delta_te
 
@@ -761,7 +797,7 @@ class Shot:
             x2           = 0.2
             xticks       = 4
             xminor       = 0.025
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.H_ped_psin_te/1000.0
             ylabel       = r'$T_{\mathrm{e,ped}}$ (keV)'
@@ -769,7 +805,7 @@ class Shot:
             y2           = 0.3
             yticks       = 3
             yminor       = 0.05
-            ysize        = 60
+            ysize        = numPix
 
         # ne,ped vs. Delta_ne
 
@@ -783,7 +819,7 @@ class Shot:
             x2           = 0.2
             xticks       = 4
             xminor       = 0.025
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.H_ped_psin_ne/1.0e20
             ylabel       = r'$n_{\mathrm{e,ped}}$ ($10^{20}$ m$^{-3}$)'
@@ -791,7 +827,7 @@ class Shot:
             y2           = 0.6
             yticks       = 3
             yminor       = 0.05
-            ysize        = 60
+            ysize        = numPix
 
         # pe,ped vs. Delta_pe
 
@@ -805,7 +841,7 @@ class Shot:
             x2           = 0.2
             xticks       = 4
             xminor       = 0.025
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.H_ped_psin_pe/1000.0
             ylabel       = r'$p_{\mathrm{e,ped}}$ (kPa)'
@@ -813,7 +849,7 @@ class Shot:
             y2           = 1.2
             yticks       = 4
             yminor       = 0.05
-            ysize        = 60
+            ysize        = numPix
 
         # te,ped,r vs. W_r_te
 
@@ -827,7 +863,7 @@ class Shot:
             x2           = 0.09
             xticks       = 3
             xminor       = 0.01
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.H_ped_radius_te/1000.0
             ylabel       = r'$T_{\mathrm{e,ped,r}}$ (keV)'
@@ -835,7 +871,7 @@ class Shot:
             y2           = 0.3
             yticks       = 3
             yminor       = 0.05
-            ysize        = 60
+            ysize        = numPix
 
         # ne,ped,r vs. W_r_ne
 
@@ -849,7 +885,7 @@ class Shot:
             x2           = 0.09
             xticks       = 3
             xminor       = 0.01
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.H_ped_radius_ne/1.0e20
             ylabel       = r'$n_{\mathrm{e,ped,r}}$ ($10^{20}$ m$^{-3}$)'
@@ -857,7 +893,7 @@ class Shot:
             y2           = 0.6
             yticks       = 3
             yminor       = 0.05
-            ysize        = 60
+            ysize        = numPix
 
         # pe,ped,r vs. W_r_pe
 
@@ -871,7 +907,7 @@ class Shot:
             x2           = 0.09
             xticks       = 3
             xminor       = 0.01
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.H_ped_radius_pe/1000.0
             ylabel       = r'$p_{\mathrm{e,ped,r}}$ (kPa)'
@@ -879,7 +915,7 @@ class Shot:
             y2           = 1.2
             yticks       = 3
             yminor       = 0.05
-            ysize        = 60
+            ysize        = numPix
         # A vs kappa
 
         if plotnumber == 8:
@@ -892,7 +928,7 @@ class Shot:
             x2           = 2.4
             xticks       = 4
             xminor       = 0.1
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.elong
             ylabel       = r'$\kappa$'
@@ -900,7 +936,7 @@ class Shot:
             y2           = 3.0
             yticks       = 4
             yminor       = 0.05
-            ysize        = 60
+            ysize        = numPix
 
         # A vs delta
 
@@ -914,7 +950,7 @@ class Shot:
             x2           = 3
             xticks       = 4
             xminor       = 0.1
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.delta
             ylabel       = r'$\delta$ - Triangularity'
@@ -922,7 +958,7 @@ class Shot:
             y2           = 0.75
             yticks       = 4
             yminor       = 0.05
-            ysize        = 60
+            ysize        = numPix
         
         #elong vs delta
 
@@ -936,7 +972,7 @@ class Shot:
             x2           = 3
             xticks       = 4
             xminor       = 0.025
-            xsize        = 60
+            xsize        = numPix
 
             yquantity    = self.delta
             ylabel       = r'$\delta$'
@@ -944,7 +980,7 @@ class Shot:
             y2           = 0.75
             yticks       = 3
             yminor       = 0.025
-            ysize        = 60
+            ysize        = numPix
 
 
 
@@ -956,7 +992,7 @@ class Shot:
         makefigure(*args)
     def makeAnimation(self, yvalue, saveanim = True):
         '''Creates animation of yvalue ("te", "ne", "r", or "all") vs
-        radius across time for shot number shotNum. Saves to files.'''
+        radius across time for shot number shotNum. Can be saved to files (saveanim).'''
         if self.shotNum == "allShots":
             raise Exception("only run animation on single shot")
         if not self.client:
