@@ -12,13 +12,13 @@ from scipy.optimize import curve_fit
 
 
 try:
-    from pedinf.models import mtanh
+    from pedinf.models import mtanh # type: ignore
 except:
     print("pedinf connection failed")
 import scipy
 
 try:
-    import pyuda
+    import pyuda # type: ignore
 except:
     print("pyuda connection failed")
 from importlib import reload

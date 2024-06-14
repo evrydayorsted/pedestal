@@ -516,6 +516,59 @@
 
 
 
+# make a contour plot
+
+# a.contourPlot(9, fitHMode=False,savefigure=True, plotName= "allShotsDeltavsAratioLimited2pm0.02")
+
+## make scatter plot colored by time 
+
+# plt.scatter(x=a.Aratio, y=a.delta, c=a.times, cmap="rainbow", s= 0.6, alpha=0.6) 
+# plt.xlim(1, 3)
+# plt.xlabel(r"Aspect Ratio")
+# plt.ylabel(r"$\delta$")
+# plt.ylim(0,.75)
+# plt.colorbar(label="Time in shot", orientation="horizontal") 
+# plt.savefig("allShotsAratioVsDeltaTimeColored.png")
+# plt.show()
+#plt.savefig("plots/elongAboveMean+OneStdev.png")
 
 
+# histogram
 
+
+# a = Shot("allShots", "pkl")
+# fig, ax = plt.subplots(1, 1) 
+# ax.hist(a.Aratio, bins = 200, range=(1.3,1.9)) 
+  
+# # Set title 
+# ax.set_title("Aspect Ratio Histogram") 
+  
+# # adding labels 
+# ax.set_xlabel('Aratio') 
+# ax.set_ylabel('counts') 
+# plt.savefig("plots/aRatioHistogram")
+# plt.show()
+
+# pull MASTU data
+
+# """
+# """
+
+
+# # Imports
+
+# import pyuda
+# import numpy
+# import matplotlib.pyplot as plt
+
+# client = pyuda.Client()
+
+# shot = 44661
+
+# betaN = client.get('epm/output/globalParameters/betaN',shot)
+# betaN_data = numpy.array(betaN.data)
+# betaN_time = numpy.array(betaN.time.data)
+
+# plt.plot(betaN_time,betaN_data)
+
+# plt.show()
