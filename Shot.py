@@ -8,6 +8,9 @@ import matplotlib
 import matplotlib.animation as animation
 import numpy as np
 import matplotlib.cm
+from scipy.optimize import curve_fit
+
+
 try:
     from pedinf.models import mtanh
 except:
@@ -530,7 +533,7 @@ class Shot:
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
-    def contourPlot(self, plotnumber, savefigure=True, showfigure=True):
+    def contourPlot(self, plotnumber, savefigure=True, showfigure=True, fitHMode=False, plotName = "default"):
         '''1 for Beta vs. Delta\n
        2 for Te,ped vs. Delta_te\n
        3 for ne,ped vs. Delta_ne\n
@@ -587,11 +590,9 @@ class Shot:
                     index, = np.where((xquantity>=xx[i])   & 
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
-                                        (yquantity< yy[j+1]) &
-                                        (yquantity>0.75*xquantity))
+                                        (yquantity< yy[j+1]))
                     Ntot[i,j]   = len(index)
-
-
+            
             zeroindex = np.where(Ntot == 0.0)
             Ntot[zeroindex] = 1.0e-10
             zz = np.transpose(np.log10(Ntot))
@@ -616,24 +617,56 @@ class Shot:
 
             plt.subplots_adjust(left=0.20,right = 0.90,bottom=0.20,top=0.92)
             # This provides a square plot area with a 5in by 6in figure area and the colorbar on the right
-
+            plt.hlines(0.5,1,3)
             if plotnumber == 1:
                 x_width = np.linspace(x1,x2,100)
                 y_beta  = (x_width/0.43)**(1.0/1.03)
                 y_beta2 = (x_width/0.08)**(2.0)
-                plt.plot(x_width,y_beta,color='red',linestyle='--')
-                plt.plot(x_width,y_beta2,color='magenta',linestyle='--')
-                plt.plot(x_width, 3/4*x_width, color="blue")
+                #plt.plot(x_width,y_beta,color='red',linestyle='--')
+                #plt.plot(x_width,y_beta2,color='magenta',linestyle='--')
+                #plt.plot(x_width, 3/4*x_width, color="blue")
                 #plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
-                plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
-                plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
-            if savefigure:
-                plt.savefig("plots/"+outfilename+'.png')
-            if showfigure:
-                plt.show()
-        #    plt.close()
+                #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
+                #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
+                if fitHMode:
+                    validXQuantity = np.array([])
+                    validYQuantity = np.array([])
+                    for i in range(len(xquantity)):
+                        if((x1<xquantity[i]<x2) and 
+                        (y1<yquantity[i]<y2) and 
+                        (yquantity[i]>0.75*xquantity[i])):
+                            validXQuantity = np.append(validXQuantity,xquantity[i])
+                            validYQuantity = np.append(validYQuantity, yquantity[i])
+                #    plt.close()
+                    # Define the function to fit.
+                    # The first parameter is the independent variable. # The remaining parameters␣are the fit parameters.
+                    def curve(x,m):
+                        return  m*x
+                    # Do the fit. Read the help on curve_fit!
+                    (popt,pcov) = curve_fit(curve, validXQuantity, validYQuantity, p0=(20))
+                    # popt now holds the optimized parameters a in popt[0] and b in popt[1]
+                    # pcov is the covariance matrix, which gives errors and correlations.
+                    # To extract just the errors on the fit parameters as sigmas:
+                    popt = np.round(popt, 3)
+                    perr = np.round(np.sqrt(np.diag(pcov)), 3)
+                    # now perr holds the +- 1sigma error for a and b.
+                    # First plot the data with error bars
+                    #plt.plot(xquantity, yquantity, "o", label="data", color="black")
+                    # There are many ways to plot the line given a and b, but here’s one:
+                    yfit = curve(x_width, *popt) # * passes a list as remaining function parameters
+                    plt.plot(x_width, yfit,label=f"fit - {popt[0]}$\pm${perr[0]} $\delta$", color="black")
+                    plt.plot(validXQuantity, validYQuantity, ".", markersize = 0.5, color="red")
+                    plt.legend()
+                    # savefig("hw1_meaningful_file_name.pdf")
+                    # PDFs can be used as LaTeX figures
 
-        # Beta vs. Delta
+            if savefigure:
+                if plotName == "default":
+                    plt.savefig("plots/"+outfilename+'.png')
+                else:
+                    plt.savefig("plots/"+plotName+'.png')
+            if showfigure:
+                plt.show()        # Beta vs. Delta
         
         if plotnumber == 1:
 
@@ -812,7 +845,7 @@ class Shot:
 
         if plotnumber == 9:
 
-            outfilename = "Avsdelta"
+            outfilename = "aratiovsdelta"
 
             xquantity    = self.Aratio
             xlabel       = r'Aspect ratio'
@@ -830,25 +863,25 @@ class Shot:
             yminor       = 0.05
             ysize        = 60
         
-        #free slot
+        #elong vs delta
 
         if plotnumber == 10:
 
-            outfilename = "0.75linearFilterLMode"
+            outfilename = "elongvsdelta"
 
-            xquantity    = self.W_ped
-            xlabel       = r'$\Delta_{\mathrm{ped}}$'
-            x1           = 0.0
-            x2           = 0.2
+            xquantity    = self.elong
+            xlabel       = r'$\kappa$'
+            x1           = 1
+            x2           = 3
             xticks       = 4
             xminor       = 0.025
             xsize        = 60
 
-            yquantity    = self.Beta_ped
-            ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
-            y1           = 0.0
-            y2           = 0.35
-            yticks       = 7
+            yquantity    = self.delta
+            ylabel       = r'$\delta$'
+            y1           = 0
+            y2           = 0.75
+            yticks       = 3
             yminor       = 0.025
             ysize        = 60
 
