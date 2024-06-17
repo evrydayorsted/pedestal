@@ -681,10 +681,15 @@ class Shot:
                             aspect='auto',
                             vmin=cbarMin,vmax=cbarMax)    
             cbar = plt.colorbar(CS,ticks=[cbarMin, (cbarMax-cbarMin)/2+cbarMin, cbarMax])#,3.0])
+            colorDict = {
+                "count":"viridis",
+                "elong":"rainbow"
+            }
+
             try:
-                cmap = copy.copy(matplotlib.colormaps.get_cmap('rainbow'))
+                cmap = copy.copy(matplotlib.colormaps.get_cmap(colorDict[countType]))
             except:
-                cmap = copy.copy(matplotlib.cm.get_cmap('rainbow'))
+                cmap = copy.copy(matplotlib.cm.get_cmap(colorDict[countType]))
 
             cmap.set_under(color='white')
             cmap.set_bad(color='white')
