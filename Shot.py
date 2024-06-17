@@ -113,8 +113,8 @@ class Shot:
         return f"{self.shotNum}" 
     
     def fit(self, printtimes= False, plotvstime = False, printquantities = False,
-	    plotvsradius = False, plotvspsin = True, savepklforshot = False,
-	    presetTimes= [], savefigure = True, showfigure = True):
+	    plotvsradius = False, plotvspsin = False, savepklforshot = False,
+	    presetTimes= [], savefigure = False, showfigure = False):
         '''Pulls automatic fitting data for the given shot. Can print the time of each plot
         (printtimes). Automatically fits all time slices of a given shot, unless presetTimes is 
         given as a list of time points in seconds. Default is to plot vs psi_n (plotvspsin), but
