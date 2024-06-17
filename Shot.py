@@ -665,7 +665,7 @@ class Shot:
                             Ntot[i,j] = np.mean(self.Aratio[index])
             if (countType =="count"):
                 zeroindex = np.where(Ntot == 0.0)
-                Ntot[zeroindex] = 1.0e-10
+                Ntot[zeroindex] = -1.0e-10
             elif (countType == "time"):
                 zeroindex = np.where(Ntot == 0.0)
                 Ntot[zeroindex] = -1.0e-10
