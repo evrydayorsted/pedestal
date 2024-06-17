@@ -920,12 +920,12 @@ class Shot:
 
         if plotnumber == 8:
 
-            outfilename = "Avskappa"
+            outfilename = "deltavskappa"
 
-            xquantity    = self.Aratio
-            xlabel       = r'Aspect ratio'
-            x1           = 1.2
-            x2           = 2.4
+            xquantity    = self.delta
+            xlabel       = r'Delta'
+            x1           = 0
+            x2           = 0.75
             xticks       = 4
             xminor       = 0.1
             xsize        = numPix
@@ -981,6 +981,7 @@ class Shot:
             yticks       = 3
             yminor       = 0.025
             ysize        = numPix
+
 
 
 
