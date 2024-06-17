@@ -655,7 +655,7 @@ class Shot:
                     if len(index) >= numMin:
                         if countType == "count":
                             if len(index) == 0:
-                                Ntot[i,j] = 0
+                                Ntot[i,j] = -1e-10
                             else:
                                 Ntot[i,j] = np.log10(len(index))
                         elif countType == 'elong':
