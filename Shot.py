@@ -654,7 +654,7 @@ class Shot:
                                         (yquantity< yy[j+1]))
                     if len(index) > numMin:
                         if countType == "count":
-                            if len(index) = 0:
+                            if len(index) == 0:
                                 Ntot[i,j] = 0
                             else:
                                 Ntot[i,j] = np.log10(len(index))
