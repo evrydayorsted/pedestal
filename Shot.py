@@ -652,7 +652,7 @@ class Shot:
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
                                         (yquantity< yy[j+1]))
-                    if len(index) > numMin:
+                    if len(index) >= numMin:
                         if countType == "count":
                             if len(index) == 0:
                                 Ntot[i,j] = 0
