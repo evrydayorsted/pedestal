@@ -654,7 +654,10 @@ class Shot:
                                         (yquantity< yy[j+1]))
                     if len(index) > numMin:
                         if countType == "count":
-                            Ntot[i,j] = np.log10(len(index))
+                            if len(index) = 0:
+                                Ntot[i,j] = 0
+                            else:
+                                Ntot[i,j] = np.log10(len(index))
                         elif countType == 'elong':
                             Ntot[i,j]   = np.mean(self.elong[index])
                         elif countType == "delta":
