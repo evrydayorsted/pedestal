@@ -572,7 +572,7 @@ class Shot:
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
                     'Aratio': Aratio, 'elong': elong, 'delta': delta}
-            filename = 'output/MAST-U_pedestal_'+str(shot)+'.pkl'
+            filename = 'output/MAST-U_pedestal_V2_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
