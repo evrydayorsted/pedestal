@@ -1,3 +1,4 @@
+import matplotlib.cm
 import matplotlib.pyplot as plt
 import pickle
 from archive.contourplot import *
@@ -680,7 +681,11 @@ class Shot:
                             aspect='auto',
                             vmin=cbarMin,vmax=cbarMax)    
             cbar = plt.colorbar(CS,ticks=[cbarMin, (cbarMax-cbarMin)/2+cbarMin, cbarMax])#,3.0])
-            cmap = copy.copy(matplotlib.colormaps.get_cmap('rainbow'))
+            try:
+                cmap = copy.copy(matplotlib.colormaps.get_cmap('rainbow'))
+            except:
+                cmap = copy.copy(matplotlib.cm.get_cmap('rainbow'))
+
             cmap.set_under(color='white')
             cmap.set_bad(color='white')
             plt.set_cmap(cmap)
