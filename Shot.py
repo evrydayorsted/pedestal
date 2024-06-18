@@ -102,9 +102,12 @@ class Shot:
                 print("rprof downloaded")
                 self.times_ayc = self.te.time.data
                 self.client = True
-                Ip        = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
+                Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
                 self.Ip = Ip.data
+                print(self.Ip)
+                
                 self.IpTime = Ip.time.data
+                print(self.IpTime)
                 print("plasma current loaded")
                 print("All data downloaded from client")
             except:
