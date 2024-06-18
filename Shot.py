@@ -237,7 +237,7 @@ class Shot:
         psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
         print('done efit')
         #in megawatts
-        total_NBI_power = client.get('anb/sum/power', shot)
+        #total_NBI_power = client.get('anb/sum/power', shot)
         ultimatemintime = 0.1
         mintime   = numpy.max([numpy.min(times_apf),numpy.min(times_epm),ultimatemintime])
         maxtime   = numpy.min([numpy.max(times_apf),numpy.max(times_epm)])
