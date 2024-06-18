@@ -42,7 +42,7 @@ class Shot:
                                                'output/MAST_U_pedestal_allShots.pkl' '''
             try:
                 #download pkl
-                if self.shotNum== "allShots":
+                if type(shotNum)==str:
                     filename = 'output/MAST-U_pedestal_'+self.shotNum+'.pkl'
                 elif int(self.shotNum) > 49238:
                     filename = 'output/MAST-U_pedestal_V2_'+self.shotNum+'.pkl'
