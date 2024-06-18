@@ -42,7 +42,12 @@ class Shot:
                                                'output/MAST_U_pedestal_allShots.pkl' '''
             try:
                 #download pkl
-                filename = 'output/MAST-U_pedestal_'+self.shotNum+'.pkl'
+                if self.shotNum== "allShots":
+                    filename = 'output/MAST-U_pedestal_'+self.shotNum+'.pkl'
+                elif int(self.shotNum) > 49238:
+                    filename = 'output/MAST-U_pedestal_V2_'+self.shotNum+'.pkl'
+                else:
+                    filename = 'output/MAST-U_pedestal_'+self.shotNum+'.pkl'
                 infile = open(filename, 'rb')
                 pkldata = pickle.load(infile)
                 infile.close()

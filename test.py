@@ -36,6 +36,10 @@ print("\n\n")
 b.fit(presetTimes = [0.406], plotvsradius = True, savefigure= False, showfigure = False)
 print("\n\n")
 
+# Test V2 batch
+c = Shot(49303, "all")
+c.contourPlot(1)
+
 #c = Shot(48339, "client")
 #c.fit(presetTimes = [0.400], plotvsradius = True, savefigure= False, plotfigure = False)
 print("Tests ran successfully")
