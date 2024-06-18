@@ -667,6 +667,7 @@ class Shot:
                     for k in index:
                         if (self.Ip.data[np.argmin(self.Ip.time.data-self.times[k])]<0.9*np.max(self.Ip.data)):
                             indexPlasmaCurrentFiltered += [k]
+                            print(k)
                     index = indexPlasmaCurrentFiltered
                     if len(index) >= numMin:
                         if countType == "count":
