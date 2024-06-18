@@ -73,6 +73,10 @@ class Shot:
                 self.elong  = pkldata['elong']
                 self.delta = pkldata['delta']
                 self.pkl = True
+                try:
+                    self.Ip = pkldata['Ip']
+                except:
+                    pass
                 print("Pkl data loaded")
             except:
                 print("Pkl data procurement failed")
@@ -578,7 +582,7 @@ class Shot:
                     'H_ped_psin_te': H_ped_psin_te,'H_ped_psin_ne': H_ped_psin_ne,'H_ped_psin_pe': H_ped_psin_pe,
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
-                    'Aratio': Aratio, 'elong': elong, 'delta': delta}
+                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'Ip': Ip}
             filename = 'output/MAST-U_pedestal_V2_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
