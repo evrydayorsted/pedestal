@@ -670,7 +670,7 @@ class Shot:
                     for k in index:
                         print(np.max(self.Ip.data))
                         print(self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))])
-                        if (self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))]>0.9*np.max(self.Ip)):
+                        if (self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))]<0.9*np.max(self.Ip)):
                             indexPlasmaCurrentFiltered = np.append(indexPlasmaCurrentFiltered, [k])
                             print(k)
                     print(indexPlasmaCurrentFiltered)
