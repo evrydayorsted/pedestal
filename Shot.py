@@ -662,8 +662,12 @@ class Shot:
                     index, = np.where((xquantity>=xx[i])   & 
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
-                                        (yquantity< yy[j+1])& 
-                                        (self.Ip.data[np.argmin(self.Ip.time.data-self.times)]<0.9*np.max(self.Ip.data)))
+                                        (yquantity< yy[j+1])) 
+                    indexPlasmaCurrentFiltered = np.array([])
+                    for i in index:
+                        if (self.Ip.data[np.argmin(self.Ip.time.data-self.times[i])]<0.9*np.max(self.Ip.data)):
+                            indexPlasmaCurrentFiltered += [i]
+                    index = indexPlasmaCurrentFiltered
                     if len(index) >= numMin:
                         if countType == "count":
                             if len(index) == 0:
