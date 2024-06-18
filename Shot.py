@@ -103,7 +103,7 @@ class Shot:
                 self.times_ayc = self.te.time.data
                 self.client = True
                 Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
-                self.Ip = Ip.data
+                self.Ip = np.nan_to_num(Ip.data)
                 print(self.Ip)
                 
                 self.IpTime = Ip.time.data
