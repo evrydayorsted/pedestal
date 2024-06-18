@@ -665,8 +665,7 @@ class Shot:
                                         (yquantity< yy[j+1])) 
                     indexPlasmaCurrentFiltered = np.array([])
                     for k in index:
-                        print(k)
-                        if (self.Ip.data[np.argmin(self.Ip.time.data-self.times[k])]<0.9*np.max(self.Ip.data)):
+                        if (self.Ip.data[np.argmin(self.Ip.time.data-self.times[k])]>0.9*np.max(self.Ip.data)):
                             indexPlasmaCurrentFiltered += [k]
                             print(k)
                     index = indexPlasmaCurrentFiltered
