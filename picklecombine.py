@@ -18,13 +18,13 @@ shots = [
 newShots = pandas.read_csv("MU03_shotlist_cleaned_half_done.csv")
 print(newShots)
 
-#infiles = ['MAST-U_pedestal_old6.pkl'] + ['output/MAST-U_pedestal_'+str(shot)+'.pkl' for shot in shots]
+#all shots
 #infiles = ['output/MAST-U_pedestal_'+str(shot)+'.pkl' for shot in shots] + ['output/MAST-U_pedestal_V2_'+str(shot)+'.pkl' for shot in newShots["Shot Number"]]
-infiles = ['output/MAST-U_pedestal_V2_'+str(shot)+'.pkl' for shot in newShots["Shot Number"]]
-print(infiles)
+#outfile = open('MAST-U_pedestal_allShots.pkl', 'wb')
 
+#just V2 shots
+infiles = ['output/MAST-U_pedestal_V2_'+str(shot)+'.pkl' for shot in newShots["Shot Number"]]
 outfile = open('MAST-U_pedestal_V2only.pkl','wb')
-#outfile = open('test.pkl','wb')
 
 
 infile_01      = open(infiles[0], 'rb')

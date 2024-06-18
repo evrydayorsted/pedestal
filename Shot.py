@@ -671,6 +671,8 @@ class Shot:
                             Ntot[i,j] = np.mean(self.times[index])
                         elif countType == "aratio":
                             Ntot[i,j] = np.mean(self.Aratio[index])
+                    else:
+                        Ntot[i,j] = cbarMin -1
             if (countType == "time"):
                 zeroindex = np.where(Ntot == 0.0)
                 Ntot[zeroindex] = -1.0e-10
@@ -688,7 +690,8 @@ class Shot:
             cbar = plt.colorbar(CS,ticks=[cbarMin, (cbarMax-cbarMin)/2+cbarMin, cbarMax])#,3.0])
             colorDict = {
                 "count":"viridis",
-                "elong":"rainbow"
+                "elong":"rainbow",
+                "delta":"rainbow"
             }
 
             try:
@@ -937,18 +940,18 @@ class Shot:
 
             outfilename = "deltavskappa"
 
-            xquantity    = self.delta
-            xlabel       = r'Delta'
-            x1           = 0
-            x2           = 0.75
+            xquantity    = self.elong
+            xlabel       = r'$\kappa$'
+            x1           = 1
+            x2           = 3
             xticks       = 4
             xminor       = 0.1
             xsize        = numPix
 
-            yquantity    = self.elong
-            ylabel       = r'$\kappa$'
-            y1           = 1.0
-            y2           = 3.0
+            yquantity    = self.delta
+            ylabel       = r'$\delta$'
+            y1           = 0
+            y2           = 0.75
             yticks       = 4
             yminor       = 0.05
             ysize        = numPix
