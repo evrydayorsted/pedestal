@@ -98,6 +98,8 @@ class Shot:
                 print("rprof downloaded")
                 self.times_ayc = self.te.time.data
                 self.client = True
+                self.Ip        = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
+                print("plasma current loaded")
                 print("All data downloaded from client")
             except:
                 print("Client connection failed.")
@@ -671,6 +673,12 @@ class Shot:
                             Ntot[i,j] = np.mean(self.times[index])
                         elif countType == "aratio":
                             Ntot[i,j] = np.mean(self.Aratio[index])
+                        elif countType == "pedestalHeight":
+                            Ntot[i,j] = np.mean(self.Beta_ped[index])
+                        elif countType == "pedestalSlope":
+                            Ntot[i,j] = np.mean(self.Beta_ped[index]/self.W_ped[index])
+
+
                     else:
                         Ntot[i,j] = cbarMin -1
             if (countType == "time"):
@@ -691,7 +699,9 @@ class Shot:
             colorDict = {
                 "count":"viridis",
                 "elong":"rainbow",
-                "delta":"rainbow"
+                "delta":"rainbow",
+                "pedestalHeight":"rainbow",
+                "pedestalSlope":"plasma"
             }
 
             try:
@@ -719,7 +729,6 @@ class Shot:
 
             plt.subplots_adjust(left=0.20,right = 0.90,bottom=0.20,top=0.92)
             # This provides a square plot area with a 5in by 6in figure area and the colorbar on the right
-            plt.hlines(0.5,1,3)
             if plotnumber == 1:
                 x_width = np.linspace(x1,x2,100)
                 y_beta  = (x_width/0.43)**(1.0/1.03)
@@ -942,16 +951,16 @@ class Shot:
 
             xquantity    = self.elong
             xlabel       = r'$\kappa$'
-            x1           = 1
-            x2           = 3
-            xticks       = 4
+            x1           = 1.8
+            x2           = 2.2
+            xticks       = 2
             xminor       = 0.1
             xsize        = numPix
 
             yquantity    = self.delta
             ylabel       = r'$\delta$'
-            y1           = 0
-            y2           = 0.75
+            y1           = 0.38
+            y2           = 0.58
             yticks       = 4
             yminor       = 0.05
             ysize        = numPix
