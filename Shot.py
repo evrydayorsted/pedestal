@@ -75,6 +75,7 @@ class Shot:
                 self.pkl = True
                 try:
                     self.Ip = pkldata['Ip']
+                    self.IpTime = pkldata['IpTime']
                 except:
                     pass
                 print("Pkl data loaded")
@@ -585,8 +586,8 @@ class Shot:
                     'H_ped_psin_te': H_ped_psin_te,'H_ped_psin_ne': H_ped_psin_ne,'H_ped_psin_pe': H_ped_psin_pe,
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
-                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'Ip': Ip}
-            filename = 'output/MAST-U_pedestal_V2_'+str(shot)+'.pkl'
+                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'Ip': self.Ip, 'IpTime': self.IpTime}
+            filename = 'outputWithPlasmaCurrent/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
@@ -670,7 +671,7 @@ class Shot:
                     for k in index:
                         print(np.max(self.Ip.data))
                         print(self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))])
-                        if (self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))]<0.9*np.max(self.Ip)):
+                        if (self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))]>0.9*np.max(self.Ip)):
                             indexPlasmaCurrentFiltered = np.append(indexPlasmaCurrentFiltered, [k])
                             print(k)
                     print(indexPlasmaCurrentFiltered)
