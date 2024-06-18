@@ -104,10 +104,8 @@ class Shot:
                 self.client = True
                 Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
                 self.Ip = np.nan_to_num(Ip.data)
-                print(self.Ip)
                 
                 self.IpTime = Ip.time.data
-                print(self.IpTime)
                 print("plasma current loaded")
                 print("All data downloaded from client")
             except:
@@ -671,8 +669,8 @@ class Shot:
                     indexPlasmaCurrentFiltered = np.array([])
                     for k in index:
                         print(np.max(self.Ip.data))
-                        print(self.Ip[np.argmin(self.IpTime-self.times[k])])
-                        if (self.Ip[np.argmin(self.IpTime-self.times[k])]>0.9*np.max(self.Ip)):
+                        print(self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))])
+                        if (self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))]>0.9*np.max(self.Ip)):
                             indexPlasmaCurrentFiltered += [k]
                             print(k)
                     index = indexPlasmaCurrentFiltered
