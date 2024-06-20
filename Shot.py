@@ -251,7 +251,7 @@ class Shot:
         times = []
         
         if presetTimes != []:
-            times = presetTimes
+            times0 = presetTimes
         else:
             for j in range(0,len(times0)):
 
@@ -667,15 +667,19 @@ class Shot:
                                         (xquantity< xx[i+1]) &
                                         (yquantity>=yy[j])   &
                                         (yquantity< yy[j+1])) 
-                    indexPlasmaCurrentFiltered = np.array([])
-                    for k in index:
-                        print(np.max(self.Ip.data))
-                        print(self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))])
-                        if (self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))]>0.9*np.max(self.Ip)):
-                            indexPlasmaCurrentFiltered = np.append(indexPlasmaCurrentFiltered, [k])
-                            print(k)
-                    print(indexPlasmaCurrentFiltered)
-                    index = indexPlasmaCurrentFiltered
+                
+                    # try:
+                    #     indexPlasmaCurrentFiltered = np.array([])
+                    #     for k in index:
+                    #         print(np.max(self.Ip.data))
+                    #         print(self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))])
+                    #         if (self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))]>0.9*np.max(self.Ip)):
+                    #             indexPlasmaCurrentFiltered = np.append(indexPlasmaCurrentFiltered, [k])
+                    #             print(k)
+                    #     print(indexPlasmaCurrentFiltered)
+                    #     index = indexPlasmaCurrentFiltered
+                    # except:
+                    #     pass
                     if len(index) >= numMin:
                         if countType == "count":
                             if len(index) == 0:
@@ -1026,7 +1030,7 @@ class Shot:
             yminor       = 0.025
             ysize        = numPix
 
-
+        
 
 
         outfilename = str(self.shotNum) + outfilename
