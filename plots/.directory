@@ -1,4 +1,6 @@
 [Dolphin]
-Timestamp=2024,6,10,22,59,38
+SortOrder=1
+SortRole=date
+Timestamp=2024,6,20,10,27,38
 Version=3
-ViewMode=2
+ViewMode=1
