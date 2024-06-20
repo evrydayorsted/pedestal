@@ -251,7 +251,7 @@ class Shot:
         times = []
         
         if presetTimes != []:
-            times0 = presetTimes
+            times = presetTimes
         else:
             for j in range(0,len(times0)):
 
