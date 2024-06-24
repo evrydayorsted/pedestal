@@ -1,4 +1,7 @@
-IMPORT AS 
+# IMPORT AS 
+import matplotlib.pyplot as plt
+import numpy as np
+nradial_locs = 100
 midradius_idx = nradial_locs // 2
 
 ticklabelsize = 12
