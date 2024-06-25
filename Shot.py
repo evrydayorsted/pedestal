@@ -82,6 +82,71 @@ class Shot:
             print("Getting data from client for " +self.shotNum)
             try:
                 client = pyuda.Client()
+
+                # Defining shot based off of class instance
+                shot = self.shotNum
+
+                # Pull fit data from client
+                group = "/apf/core/mtanh/lfs/"
+
+                self.te_ped_location = client.get(group + "t_e/pedestal_location", shot)
+                self.te_ped_height   = client.get(group + "t_e/pedestal_height", shot)
+                self.te_ped_width    = client.get(group + "t_e/pedestal_width", shot)
+                self.te_ped_top_grad = client.get(group + "t_e/pedestal_top_gradient", shot)
+                self.te_background   = client.get(group + "t_e/background_level", shot)
+
+                self.times_apf       = self.te_ped_location.time.data
+
+                self.ne_ped_location = client.get(group + "n_e/pedestal_location", shot)
+                self.ne_ped_height   = client.get(group + "n_e/pedestal_height", shot)
+                self.ne_ped_width    = client.get(group + "n_e/pedestal_width", shot)
+                self.ne_ped_top_grad = client.get(group + "n_e/pedestal_top_gradient", shot)
+                self.ne_background   = client.get(group + "n_e/background_level", shot)
+
+                self.pe_ped_location = client.get(group + "p_e/pedestal_location", shot)
+                self.pe_ped_height   = client.get(group + "p_e/pedestal_height", shot)
+                self.pe_ped_width    = client.get(group + "p_e/pedestal_width", shot)
+                self.pe_ped_top_grad = client.get(group + "p_e/pedestal_top_gradient", shot)
+                self.pe_background   = client.get(group + "p_e/background_level", shot)
+                print("done parameters")
+
+
+                # EPM: EFIT++
+
+                #neutral beam, Ip, toroidal magnetic field, stored energy, beta_N
+
+                self.Ip        = client.get('epm/output/globalParameters/plasmacurrent',shot)
+                self.times_epm = Ip.time.data
+                #toroidal magnetic field (at axis)
+                self.Btor      = client.get('epm/output/globalParameters/bphirmag',shot)
+                self.betaN      = client.get('epm/output/globalParameters/betan',shot)
+                # storedEnergy (joules)
+                self.plasmaEnergy      = client.get('epm/output/globalParameters/plasmaEnergy',shot)
+
+                self.rmaxis    = client.get('epm/output/globalParameters/magneticAxis/R',shot)
+                self.zmaxis    = client.get('epm/output/globalParameters/magneticAxis/Z',shot)
+                self.rbdy      = client.get('epm/output/separatrixGeometry/rboundary',shot)
+                self.zbdy      = client.get('epm/output/separatrixGeometry/zboundary',shot)
+                self.rmidin    = client.get('epm/output/separatrixGeometry/rmidplaneIn',shot)
+                self.rmidout   = client.get('epm/output/separatrixGeometry/rmidplaneOut',shot)
+                self.aminor    = client.get('epm/output/separatrixGeometry/minorRadius',shot)
+                self.kappa     = client.get('epm/output/separatrixGeometry/elongation',shot)
+                self.deltaup   = client.get('epm/output/separatrixGeometry/upperTriangularity',shot)
+                self.deltalow  = client.get('epm/output/separatrixGeometry/lowerTriangularity',shot)
+                #self.pmaxis    = client.get('epm/output/globalParameters/psiAxis',shot)
+                #self.psibdy    = client.get('epm/output/globalParameters/psiBoundary',shot)
+
+                self.rprof     = client.get('epm/output/radialprofiles/R',shot)
+                self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',shot)
+
+                self.r_2D      = client.get('epm/output/profiles2D/R',shot)
+                self.z_2D      = client.get('epm/output/profiles2D/Z',shot)
+                self.psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
+                self.psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
+                print('done efit')
+                #in megawatts
+                #self.total_NBI_power = client.get('anb/sum/power', shot)
+
                 self.te   = client.get('/ayc/t_e',self.shotNum)
                 print("te downloaded")
                 self.dte  = client.get('/ayc/dt_e',self.shotNum)
@@ -140,33 +205,25 @@ class Shot:
        
         Adapted from pedestal_fit_parameters Jack Berkery 2023"""
 
-        # Defining shot based off of class instance
-        shot = self.shotNum
+        te_ped_location = self.te_ped_location
+        te_ped_height   = self.te_ped_height
+        te_ped_width    = self.te_ped_width
+        te_ped_top_grad = self.te_ped_top_grad
+        te_background   = self.te_background
+        times_ayc       = self.times_ayc
+        times_apf       = self.times_apf
+        times_epm       = self.times_epm
+        ne_ped_location = self.ne_ped_location
+        ne_ped_height   = self.ne_ped_height
+        ne_ped_width    = self.ne_ped_width
+        ne_ped_top_grad = self.ne_ped_top_grad
+        ne_background   = self.ne_background
 
-        # Pull fit data from client
-        group = "/apf/core/mtanh/lfs/"
-        client = pyuda.Client()
-
-        te_ped_location = client.get(group + "t_e/pedestal_location", shot)
-        te_ped_height   = client.get(group + "t_e/pedestal_height", shot)
-        te_ped_width    = client.get(group + "t_e/pedestal_width", shot)
-        te_ped_top_grad = client.get(group + "t_e/pedestal_top_gradient", shot)
-        te_background   = client.get(group + "t_e/background_level", shot)
-
-        times_apf       = te_ped_location.time.data
-
-        ne_ped_location = client.get(group + "n_e/pedestal_location", shot)
-        ne_ped_height   = client.get(group + "n_e/pedestal_height", shot)
-        ne_ped_width    = client.get(group + "n_e/pedestal_width", shot)
-        ne_ped_top_grad = client.get(group + "n_e/pedestal_top_gradient", shot)
-        ne_background   = client.get(group + "n_e/background_level", shot)
-
-        pe_ped_location = client.get(group + "p_e/pedestal_location", shot)
-        pe_ped_height   = client.get(group + "p_e/pedestal_height", shot)
-        pe_ped_width    = client.get(group + "p_e/pedestal_width", shot)
-        pe_ped_top_grad = client.get(group + "p_e/pedestal_top_gradient", shot)
-        pe_background   = client.get(group + "p_e/background_level", shot)
-        print("done parameters")
+        pe_ped_location = self.pe_ped_location
+        pe_ped_height   = self.pe_ped_height
+        pe_ped_width    = self.pe_ped_width
+        pe_ped_top_grad = self.pe_ped_top_grad
+        pe_background   = self.pe_background
 
         # group the temperature and density parameters together so it's easy
         # to pass them into the model:
@@ -194,58 +251,57 @@ class Shot:
             pe_background.data
         ])
         
-        # AYC: Thomson data
-
-        if plotVsRadius or plotVsPsiN:
-            te   = self.te
-            dte  = self.dte
-            ne   = self.ne
-            dne  = self.dne
-            r    = self.r
-            times_ayc = self.times_ayc
-       
         # EPM: EFIT++
 
         #neutral beam, Ip, toroidal magnetic field, stored energy, beta_N
 
-        Ip        = client.get('epm/output/globalParameters/plasmacurrent',shot)
-        times_epm = Ip.time.data
+        Ip        = self.Ip
         #toroidal magnetic field (at axis)
-        Btor      = client.get('epm/output/globalParameters/bphirmag',shot)
-        betaN      = client.get('epm/output/globalParameters/betan',shot)
+        Btor      = self.Btor
+
         # storedEnergy (joules)
-        plasmaEnergy      = client.get('epm/output/globalParameters/plasmaEnergy',shot)
+        plasmaEnergy = self.plasmaEnergy
 
-        rmaxis    = client.get('epm/output/globalParameters/magneticAxis/R',shot)
-        zmaxis    = client.get('epm/output/globalParameters/magneticAxis/Z',shot)
-        rbdy      = client.get('epm/output/separatrixGeometry/rboundary',shot)
-        zbdy      = client.get('epm/output/separatrixGeometry/zboundary',shot)
-        rmidin    = client.get('epm/output/separatrixGeometry/rmidplaneIn',shot)
-        rmidout   = client.get('epm/output/separatrixGeometry/rmidplaneOut',shot)
-        aminor    = client.get('epm/output/separatrixGeometry/minorRadius',shot)
-        kappa     = client.get('epm/output/separatrixGeometry/elongation',shot)
-        deltaup   = client.get('epm/output/separatrixGeometry/upperTriangularity',shot)
-        deltalow  = client.get('epm/output/separatrixGeometry/lowerTriangularity',shot)
-        #pmaxis    = client.get('epm/output/globalParameters/psiAxis',shot)
-        #psibdy    = client.get('epm/output/globalParameters/psiBoundary',shot)
+        rmaxis    = self.rmaxis
+        zmaxis    = self.zmaxis
+        rbdy      = self.rbdy
+        zbdy      = self.zbdy
+        rmidin    = self.rmidin
+        rmidout   = self.midout
+        aminor    = self.aminor
+        kappa     = self.kappa
+        deltaup   = self.deltaup
+        deltalow  = self.deltalow
+        #pmaxis    = self.pmaxis
+        #psibdy    = self.psibdy
 
-        rprof     = client.get('epm/output/radialprofiles/R',shot)
-        psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',shot)
+        rprof     = self.rprof
+        psinprof  = self.psinprof
 
-        r_2D      = client.get('epm/output/profiles2D/R',shot)
-        z_2D      = client.get('epm/output/profiles2D/Z',shot)
-        psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
-        psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
-        print('done efit')
+        r_2D      = self.r_2D
+        z_2D      = self.z_2D
+        psin_2D   = self.psin_2D
+        psi_2D    = self.psi_2D
         #in megawatts
-        #total_NBI_power = client.get('anb/sum/power', shot)
+        #total_NBI_power = self.total_NBI_power
         ultimatemintime = 0.1
         mintime   = numpy.max([numpy.min(times_apf),numpy.min(times_epm),ultimatemintime])
         maxtime   = numpy.min([numpy.max(times_apf),numpy.max(times_epm)])
         time_index = numpy.where((times_apf >= mintime) & (times_apf <= maxtime))[0]
         times0    = numpy.array(times_apf[time_index])
 
+        te       = self.te 
+        dte      = self.dte 
+        ne       = self.ne  
+        dne      = self.dne 
+        r        = self.r  
+        psinprof = self.psinprof 
+        rprof    = self.rprof    
+        Ip       = self.Ip 
 
+        shot = self.shotNum
+                
+        IpTime = self.IpTime
         # First check if the rprof data from epm is good (at least two points > rmaxis exist). This filters out if rprof is all nans
         
         # Set up times array
