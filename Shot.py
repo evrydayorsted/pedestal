@@ -1,28 +1,24 @@
+import matplotlib
 import matplotlib.cm
 import matplotlib.pyplot as plt
+from   matplotlib.ticker import MultipleLocator
+import matplotlib.animation as animation
 import pickle
 from archive.contourplot import *
-from   matplotlib import rc
-from   matplotlib.ticker import MultipleLocator
 import copy
-import matplotlib
-import matplotlib.animation as animation
 import numpy as np
-import matplotlib.cm
+import scipy
 from scipy.optimize import curve_fit
-
 
 try:
     from pedinf.models import mtanh # type: ignore
 except:
     print("pedinf connection failed")
-import scipy
 
 try:
     import pyuda # type: ignore
 except:
     print("pyuda connection failed")
-from importlib import reload
 
 class Shot:
     '''Parameters (shotNum {# or 'allShots'}, datatype {'pkl', 'client', 'all'})'''
@@ -291,7 +287,7 @@ class Shot:
             time = times[i]
             
             time_index_apf = numpy.argmin(abs(times_apf-time))
-            if plotvsradius:
+            if plotvsradius or plotvspsin:
                 time_index_ayc = numpy.argmin(abs(times_ayc-times_apf[time_index_apf]))
             time_index_epm = numpy.argmin(abs(times_epm-times_apf[time_index_apf]))
 
