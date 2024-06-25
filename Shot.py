@@ -199,6 +199,8 @@ class Shot:
             r    = client.get('/ayc/r',shot)
         
             times_ayc = te.time.data
+        elif plotvspsin:
+            r = client.get('/ayc/r', shot)
         print('done thomson')
         # EPM: EFIT++
 
