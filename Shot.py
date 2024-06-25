@@ -42,12 +42,7 @@ class Shot:
                                                'output/MAST_U_pedestal_allShots.pkl' '''
             try:
                 #download pkl
-                if type(shotNum)==str:
-                    filename = 'output/MAST-U_pedestal_'+self.shotNum+'.pkl'
-                elif int(self.shotNum) > 49238:
-                    filename = 'output/MAST-U_pedestal_V2_'+self.shotNum+'.pkl'
-                else:
-                    filename = 'output/MAST-U_pedestal_'+self.shotNum+'.pkl'
+                filename = 'outputWithPlasmaCurrent/MAST-U_pedestal_'+self.shotNum+'.pkl'
                 infile = open(filename, 'rb')
                 pkldata = pickle.load(infile)
                 infile.close()
@@ -76,6 +71,8 @@ class Shot:
                 try:
                     self.Ip = pkldata['Ip']
                     self.IpTime = pkldata['IpTime']
+                    self.IpAdjusted = pkldata["IpTimeAdjusted"]
+                    self.IpMax = pkldata['IpMax']
                 except:
                     pass
                 print("Pkl data loaded")
@@ -594,15 +591,17 @@ class Shot:
 
 
 
-    def contourPlot(self, plotnumber, savefigure=True, showfigure=True, fitHMode=False, plotName = "default", numPix = 60,
-                    cbarMax =2, cbarMin=0, numMin = 0, countType = "count"):
+    def contourPlot(self, plotnumber, savefigure=False, showfigure=True, fitHMode=False, plotName = "default", numPix = 60,
+                    cbarMax =2, cbarMin=0, numMin = 0, countType = "count", IpMin = 0.9, LModeFilter = False):
         '''1 for Beta vs. Delta\n
        2 for Te,ped vs. Delta_te\n
        3 for ne,ped vs. Delta_ne\n
        4 for pe,ped vs. Delta_pe\n
        5 for  te,ped,r vs. W_r_te\n
        6 for ne,ped,r vs. W_r_ne\n
-       7 for pe,ped,r vs. W_r_pe]
+       7 for pe,ped,r vs. W_r_pe]\n
+       8 for delta vs kappa\n
+       11 for ne vs te
        
        Generates a contour plot that can be saved (savefigure) and/or shown (showfigure). The Hmode points can be
        fitted in Beta vs Delta plots (fitHMode), and the plotName can be set (otherwise defaults to shot 
@@ -658,29 +657,36 @@ class Shot:
             yy2 = np.delete(yy+(yy[1]-yy[0])/2.0,-1)
 
             Ntot   = np.zeros((len(xx)-1,len(yy)-1))
-
+            totalPoints = 0
             # Counts number of points that lie within each bin
             for i in range(0,len(xx)-1):
                 for j in range(0,len(yy)-1):
                     #Can add additional conditions here to filter what is shown in contour
-                    index, = np.where((xquantity>=xx[i])   & 
-                                        (xquantity< xx[i+1]) &
-                                        (yquantity>=yy[j])   &
-                                        (yquantity< yy[j+1])) 
+                    if LModeFilter == True:
+                        index, = np.where((xquantity>=xx[i])   & 
+                                            (xquantity< xx[i+1]) &
+                                            (yquantity>=yy[j])   &
+                                            (yquantity< yy[j+1]) &
+                                            (self.Beta_ped/self.W_ped >0.75)) 
                 
-                    # try:
-                    #     indexPlasmaCurrentFiltered = np.array([])
-                    #     for k in index:
-                    #         print(np.max(self.Ip.data))
-                    #         print(self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))])
-                    #         if (self.Ip[np.argmin(np.abs(self.IpTime-self.times[k]))]>0.9*np.max(self.Ip)):
-                    #             indexPlasmaCurrentFiltered = np.append(indexPlasmaCurrentFiltered, [k])
-                    #             print(k)
-                    #     print(indexPlasmaCurrentFiltered)
-                    #     index = indexPlasmaCurrentFiltered
-                    # except:
-                    #     pass
+                    else:   
+                        index, = np.where((xquantity>=xx[i])   & 
+                                            (xquantity< xx[i+1]) &
+                                            (yquantity>=yy[j])   &
+                                            (yquantity< yy[j+1])) 
+                
+                    try:
+                        indexPlasmaCurrentFiltered = np.array([])
+                        for k in index:
+                            if self.IpAdjusted[k]>IpMin*self.IpMax[k]:
+                                indexPlasmaCurrentFiltered = np.append(indexPlasmaCurrentFiltered, [k])
+                        index = indexPlasmaCurrentFiltered.astype(int)
+                    
+                    except:
+                        print("fail")
                     if len(index) >= numMin:
+                        totalPoints += len(index)
+
                         if countType == "count":
                             if len(index) == 0:
                                 Ntot[i,j] = -1e-10
@@ -701,12 +707,12 @@ class Shot:
 
 
                     else:
-                        Ntot[i,j] = cbarMin -1
+                        Ntot[i,j] = None
             if (countType == "time"):
                 zeroindex = np.where(Ntot == 0.0)
                 Ntot[zeroindex] = -1.0e-10
             zz = np.transpose(Ntot)
-
+            self.zz = zz
 
             frame1 = setupframe(1,1,1,x1,x2,y1,y2,
                                 xticks,yticks,xlabel,
@@ -750,7 +756,7 @@ class Shot:
 
             plt.subplots_adjust(left=0.20,right = 0.90,bottom=0.20,top=0.92)
             # This provides a square plot area with a 5in by 6in figure area and the colorbar on the right
-            if plotnumber == 1:
+            if plotnumber == 1 or plotnumber == 0:
                 x_width = np.linspace(x1,x2,100)
                 y_beta  = (x_width/0.43)**(1.0/1.03)
                 y_beta2 = (x_width/0.08)**(2.0)
@@ -764,6 +770,9 @@ class Shot:
                 #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
                 
                 #Provides a fit to the HMode data
+                plt.plot(x_width, 0.146*np.sqrt(x_width), label=r"$0.146\sqrt{\beta}$")
+                plt.plot(x_width, 0.104*x_width**0.309, label=r"$0.104\beta^{0.309}$")
+
                 if fitHMode:
                     validXQuantity = np.array([])
                     validYQuantity = np.array([])
@@ -811,7 +820,31 @@ class Shot:
                 else:
                     plt.savefig("plots/"+plotName+'.png')
             if showfigure:
+                plt.title(str(totalPoints)+" equilibria")
+                plt.legend()
                 plt.show()        # Beta vs. Delta
+        
+        if plotnumber == 0:
+
+            outfilename = "deltaVsBeta"
+
+            yquantity    = self.W_ped
+            ylabel       = r'$\Delta_{\mathrm{ped}}$'
+            y1           = 0.0
+            y2           = 0.15
+            yticks       = 4
+            yminor       = 0.025
+            ysize        = numPix
+
+            xquantity    = self.Beta_ped
+            xlabel       = r'$\beta_{\theta,\mathrm{ped}}$'
+            x1           = 0.0
+            x2           = 0.5
+            xticks       = 4
+            xminor       = 0.025
+            xsize        = numPix
+
+        # Te,ped vs. Delta_te
         
         if plotnumber == 1:
 
@@ -834,7 +867,7 @@ class Shot:
             ysize        = numPix
 
         # Te,ped vs. Delta_te
-
+    
         if plotnumber == 2:
 
             outfilename = "tevsdelta"
@@ -980,8 +1013,8 @@ class Shot:
 
             yquantity    = self.delta
             ylabel       = r'$\delta$'
-            y1           = 0.38
-            y2           = 0.58
+            y1           = 0.4
+            y2           = 0.6
             yticks       = 4
             yminor       = 0.05
             ysize        = numPix
@@ -1030,7 +1063,26 @@ class Shot:
             yminor       = 0.025
             ysize        = numPix
 
-        
+        #ne vs te
+        if plotnumber == 11:
+            outfilename = "nevste"
+            xquantity    = self.H_ped_psin_ne/1.0e20
+            xlabel       = r'$n_{\mathrm{e,ped}}$ ($10^{20}$ m$^{-3}$)'
+            x1           = 0.0
+            x2           = 0.7
+            xticks       = 7
+            xminor       = 0.05
+            xsize        = numPix
+
+
+            yquantity    = self.H_ped_psin_te/1000.0
+            ylabel       = r'$T_{\mathrm{e,ped}}$ (keV)'
+            y1           = 0.0
+            y2           = 0.5
+            yticks       = 5
+            yminor       = 0.05
+            ysize        = numPix
+
 
 
         outfilename = str(self.shotNum) + outfilename
