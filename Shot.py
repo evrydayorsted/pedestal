@@ -21,9 +21,13 @@ except:
     print("pyuda connection failed")
 
 class Shot:
-    '''Parameters (shotNum {# or 'allShots'}, datatype {'pkl', 'client', 'all'})'''
     def __init__(self, shotNum, datatype):
+        """Initializes shot object
 
+        Args:
+            shotNum (int or str):  Shot # or 'allShots'
+            datatype (str): 'pkl', 'client', or 'both'
+        """
         # Save shotNum as a string so it can be used in filenames
         self.shotNum = str(shotNum)
 
@@ -33,9 +37,8 @@ class Shot:
 
         # Define functions to pull data
         def pklDownload(self):
-            '''Function to pull data from pkl file 
-            Pathname of pkl should have form:  'output/MAST_U_pedestal_48339.pkl' or
-                                               'output/MAST_U_pedestal_allShots.pkl' '''
+            """Pulls data from pkl file 'output/MAST_U_pedestal_{#}.pkl' or 'output/MAST_U_pedestal_allShots.pkl'"""
+            
             try:
                 #download pkl
                 filename = 'outputWithPlasmaCurrent/MAST-U_pedestal_'+self.shotNum+'.pkl'
@@ -70,11 +73,10 @@ class Shot:
                     self.IpAdjusted = pkldata["IpTimeAdjusted"]
                     self.IpMax = pkldata['IpMax']
                 except:
-                    pass
+                    print("Plasma Current data failed")
                 print("Pkl data loaded")
             except:
                 print("Pkl data procurement failed")
-
         def clientDownload(self):
             '''Function to pull data from client. Should only be used for a single shot.'''
             print("Getting data from client for " +self.shotNum)
@@ -110,26 +112,33 @@ class Shot:
             pklDownload(self)
         elif datatype == "client":
             clientDownload(self)
-        elif datatype == "all":
+        elif datatype == "both":
             pklDownload(self)
             clientDownload(self)
         else:
-            raise Exception("datatype must be 'pkl,' 'client,' or 'all'")
+            raise Exception("datatype must be 'pkl,' 'client,' or 'both'")
         
     def __str__(self):
         '''Define string representation'''
         return f"{self.shotNum}" 
     
-    def fit(self, printtimes= False, plotvstime = False, printquantities = False,
-	    plotvsradius = False, plotvspsin = False, savepklforshot = False,
-	    presetTimes= [], savefigure = False, showfigure = False):
-        '''Pulls automatic fitting data for the given shot. Can print the time of each plot
-        (printtimes). Automatically fits all time slices of a given shot, unless presetTimes is 
-        given as a list of time points in seconds. Default is to plot vs psi_n (plotvspsin), but
-        can also plot against radius (plotvsradius) or time (plotvstime). Figure can be saved (savefigure)
-        or shown (showfigure), which are both default true. Data can also be exported as a pkl (savepklforshot).
-        
-        Adapted from pedestal_fit_parameters Jack Berkery 2023'''
+    def fit(self, printTimes= False, plotVsTime = False, printQuantities = False,
+	    plotVsRadius = False, plotVsPsiN = False, savePklForShot = False,
+	    presetTimes= [], saveFigure = False, showFigure = False):
+        """_summary_
+
+        Args:
+            printTimes (bool, optional): Prints the time slices that are processed. Defaults to False.
+            plotVsTime (bool, optional): Plots radial pedestal locations vs time. Defaults to False.
+            printQuantities (bool, optional): Prints W_ped and Beta_ped for each equilibria. Defaults to False.
+            plotVsRadius (bool, optional): Plots thompson data and fit against radius. Defaults to False.
+            plotVsPsiN (bool, optional): Plots fit against psin. Defaults to False.
+            savePklForShot (bool, optional): Saves a pkl file with shot parameters to outputWithPlasmaCurrent/MAST-U_pedestal_{shot#}.pkl. Defaults to False.
+            presetTimes (list, optional): List of time slices to process. Defaults to all time slices within a shot.
+            saveFigure (bool, optional): Saves plot to "plots/{shot#}_{timeSliceInMs}_plotVs{PsiN or radius}.png". Defaults to False.
+            showFigure (bool, optional): Displays figure in matplotlib window. Defaults to False.
+       
+        Adapted from pedestal_fit_parameters Jack Berkery 2023"""
 
         # Defining shot based off of class instance
         shot = self.shotNum
@@ -187,16 +196,14 @@ class Shot:
         
         # AYC: Thomson data
 
-        if plotvsradius or plotvspsin:
-            te   = client.get('/ayc/t_e',shot)
-            dte  = client.get('/ayc/dt_e',shot)
-            ne   = client.get('/ayc/n_e',shot)
-            dne  = client.get('/ayc/dn_e',shot)
-            r    = client.get('/ayc/r',shot)
-        
-            times_ayc = te.time.data
+        if plotVsRadius or plotVsPsiN:
+            te   = self.te
+            dte  = self.dte
+            ne   = self.ne
+            dne  = self.dne
+            r    = self.r
+            times_ayc = self.times_ayc
        
-        print('done thomson')
         # EPM: EFIT++
 
         #neutral beam, Ip, toroidal magnetic field, stored energy, beta_N
@@ -287,13 +294,13 @@ class Shot:
             time = times[i]
             
             time_index_apf = numpy.argmin(abs(times_apf-time))
-            if plotvsradius or plotvspsin:
+            if plotVsRadius or plotVsPsiN:
                 time_index_ayc = numpy.argmin(abs(times_ayc-times_apf[time_index_apf]))
             time_index_epm = numpy.argmin(abs(times_epm-times_apf[time_index_apf]))
 
-            if printtimes:
+            if printTimes:
                 print("Time = ",times_apf[time_index_apf])
-                #if plotvsradius:
+                #if plotVsRadius:
                 #    print("Time = ",times_ayc[time_index_ayc])
                 #print("Time = ",times_epm[time_index_epm])
 
@@ -406,7 +413,7 @@ class Shot:
             H_ped_radius_pe[i]  = numpy.interp(rped_pe_top,radius,pe_profile)
 
 
-            if printquantities:
+            if printQuantities:
 
                 print("")
                 #print("Psin_mid = ",psin_mid)
@@ -419,7 +426,7 @@ class Shot:
 
             fs = 16
 
-            if plotvsradius:
+            if plotVsRadius:
             
                 # Plot the profiles at a given time, vs. radius
 
@@ -467,13 +474,13 @@ class Shot:
                 ax3.tick_params(axis='y',labelsize=fs)
 
                 plt.tight_layout()
-                if savefigure:
-                    plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotvsradius.png")
-                if showfigure:
+                if saveFigure:
+                    plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
+                if showFigure:
                     plt.show()
 
 
-            if plotvspsin:
+            if plotVsPsiN:
             
                 # Plot the profiles at a given time, vs. psin
 
@@ -503,8 +510,11 @@ class Shot:
                 ax1.tick_params(axis='y',labelsize=fs)
                 ax1.tick_params(labelbottom=False)
 
+
                 ax2.plot(psin, ne_profile[index2]/1e19, lw=2, color="red")
                 ymax = 1.20*numpy.max(ne_profile/1e19)
+                ax2.errorbar(np.interp(r.data[time_index_ayc],radius[index2],psin),ne.data[time_index_ayc]/1e19,yerr=dne.data[time_index_ayc]/1e19,color='blue',marker='o',linestyle='None')
+
                 #ax2.plot((psin_ped_ne,psin_ped_ne),(0.0,neped), lw=2, color='black', linestyle='--')
                 #ax2.plot((psin_ped_ne_top,psin_ped_ne_top),(0.0,neped), lw=2, color='black', linestyle=':')
                 #ax2.plot((psin_ped_ne_bot,psin_ped_ne_bot),(0.0,neped), lw=2, color='black', linestyle=':')
@@ -538,13 +548,13 @@ class Shot:
                 ax3.tick_params(axis='y',labelsize=fs)
 
                 plt.tight_layout()
-                if savefigure:
-                    plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotvspsin.png")
-                if showfigure:
+                if saveFigure:
+                    plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsPsiN.png")
+                if showFigure:
                     plt.show()
 
                 
-        if plotvstime:
+        if plotVsTime:
 
             # Plot pedestal radial locations vs. time
 
@@ -575,7 +585,7 @@ class Shot:
             plt.show()
 
         
-        if savepklforshot:
+        if savePklForShot:
 
             pkldata = {'Shot': shot, 'Times': times, 'W_ped': W_ped, 'Beta_ped': beta_ped,
                     'W_ped_psin_te': W_ped_psin_te,'W_ped_psin_ne': W_ped_psin_ne,'W_ped_psin_pe': W_ped_psin_pe,
@@ -590,7 +600,7 @@ class Shot:
 
 
 
-    def contourPlot(self, plotnumber, savefigure=False, showfigure=True, fitHMode=False, plotName = "default", numPix = 60,
+    def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 60,
                     cbarMax =2, cbarMin=0, numMin = 0, countType = "count", IpMin = 0.9, LModeFilter = False):
         '''1 for Beta vs. Delta\n
        2 for Te,ped vs. Delta_te\n
@@ -602,7 +612,7 @@ class Shot:
        8 for delta vs kappa\n
        11 for ne vs te
        
-       Generates a contour plot that can be saved (savefigure) and/or shown (showfigure). The Hmode points can be
+       Generates a contour plot that can be saved (saveFigure) and/or shown (showFigure). The Hmode points can be
        fitted in Beta vs Delta plots (fitHMode), and the plotName can be set (otherwise defaults to shot 
        number and the type of contour plot). Can change number of pixels with numPix. Set max of log scale (cbarMax).
        Or min of colorbar (cbarMin). Can set minimum number of points for pixel to show up (numMin).
@@ -813,12 +823,12 @@ class Shot:
                     # savefig("hw1_meaningful_file_name.pdf")
                     # PDFs can be used as LaTeX figures
 
-            if savefigure:
+            if saveFigure:
                 if plotName == "default":
                     plt.savefig("plots/"+outfilename+'.png')
                 else:
                     plt.savefig("plots/"+plotName+'.png')
-            if showfigure:
+            if showFigure:
                 plt.title(str(totalPoints)+" equilibria")
                 plt.legend()
                 plt.show()        # Beta vs. Delta
