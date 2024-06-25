@@ -191,7 +191,7 @@ class Shot:
         
         # AYC: Thomson data
 
-        if plotvsradius:
+        if plotvsradius or plotvspsin:
             te   = client.get('/ayc/t_e',shot)
             dte  = client.get('/ayc/dt_e',shot)
             ne   = client.get('/ayc/n_e',shot)
@@ -199,8 +199,7 @@ class Shot:
             r    = client.get('/ayc/r',shot)
         
             times_ayc = te.time.data
-        elif plotvspsin:
-            r = client.get('/ayc/r', shot)
+       
         print('done thomson')
         # EPM: EFIT++
 
