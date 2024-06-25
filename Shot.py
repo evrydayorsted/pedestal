@@ -657,24 +657,43 @@ class Shot:
 
 
     def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 60,
-                    cbarMax =2, cbarMin=0, numMin = 0, countType = "count", IpMin = 0.9, LModeFilter = False):
-        '''1 for Beta vs. Delta\n
-       2 for Te,ped vs. Delta_te\n
-       3 for ne,ped vs. Delta_ne\n
-       4 for pe,ped vs. Delta_pe\n
-       5 for  te,ped,r vs. W_r_te\n
-       6 for ne,ped,r vs. W_r_ne\n
-       7 for pe,ped,r vs. W_r_pe]\n
-       8 for delta vs kappa\n
-       11 for ne vs te
-       
-       Generates a contour plot that can be saved (saveFigure) and/or shown (showFigure). The Hmode points can be
-       fitted in Beta vs Delta plots (fitHMode), and the plotName can be set (otherwise defaults to shot 
-       number and the type of contour plot). Can change number of pixels with numPix. Set max of log scale (cbarMax).
-       Or min of colorbar (cbarMin). Can set minimum number of points for pixel to show up (numMin).
-       countType determines how the plot is colored ('count', 'elong', 'delta', ...).
+                    cbarMax =2, cbarMin=0, numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = True):
+        """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
-       Adapted from Jack Berkery contourPlot 2024'''
+        Args:
+            plotnumber (int): Determines the x/y axes.\n
+            1 for Beta vs. Delta\n
+            2 for Te,ped vs. Delta_te\n
+            3 for ne,ped vs. Delta_ne\n
+            4 for pe,ped vs. Delta_pe\n
+            5 for  te,ped,r vs. W_r_te\n
+            6 for ne,ped,r vs. W_r_ne\n
+            7 for pe,ped,r vs. W_r_pe]\n
+            8 for delta vs kappa\n
+            9 for aratio vs delta\n
+            10 for elong vs delta\n
+            11 for ne vs te
+            saveFigure (bool, optional): Saves the plot to "plots/{shot # or 'allShots'}{typeOfContourPlot}Colored{countType}.png.\n
+            Name overriden by plotName kwarg. Defaults to False.
+            showFigure (bool, optional): Displays figure in matplotlib window. Defaults to True.
+            fitHMode (bool, optional): _description_. Defaults to False.
+            plotName (str, optional): Overrides default title for saveFigure. Defaults to {see saveFigure}.
+            numPix (int, optional): Number of pixels in the x and y directions. Defaults to 60.
+            cbarMax (int, optional): Maximum value of the colorbar. Values above this value will take on the max valued color. Defaults to 2.
+            cbarMin (int, optional): Minimum value of the colorbar. Values below this value will be white. Defaults to 0.
+            numMin (int, optional): Minimum number of equilibria in a pixel for the pixel to show up. Defaults to 10.
+            countType (str, optional): Determines what parameter will be colored by the colorbar.\n
+            "count" - log10 number of equilibria in the pixel\n
+            "elong" - average elongation of the equilibria in the pixel\n
+            "delta" - "" but with triangularity\n
+            "beta" - "" but with pedestal height\n
+            "slope" - "" but with pedestal slope\n
+            Defaults to "count".\n
+            IpMin (float, optional): Equilibria with plasma current below this percentage of the maximum will be filtered out. Defaults to 0.9.
+            lowSlopeFilter (bool, optional): Filters equilibria with beta/delta < 0.75. Defaults to True.
+        
+         Adapted from Jack Berkery contourPlot 2024
+         """
         
         # Data for contour is pulled from a pkl
         if not self.pkl:
@@ -727,7 +746,7 @@ class Shot:
             for i in range(0,len(xx)-1):
                 for j in range(0,len(yy)-1):
                     #Can add additional conditions here to filter what is shown in contour
-                    if LModeFilter == True:
+                    if lowSlopeFilter == True:
                         index, = np.where((xquantity>=xx[i])   & 
                                             (xquantity< xx[i+1]) &
                                             (yquantity>=yy[j])   &
@@ -1150,15 +1169,20 @@ class Shot:
 
 
 
-        outfilename = str(self.shotNum) + outfilename
+        outfilename = str(self.shotNum) + outfilename + "Colored" + countType
         args = [plotnumber,outfilename,
                 xquantity,xlabel,x1,x2,xticks,xminor,xsize,
                 yquantity,ylabel,y1,y2,yticks,yminor,ysize, self]
 
         makefigure(*args)
-    def makeAnimation(self, yvalue, saveanim = True):
-        '''Creates animation of yvalue ("te", "ne", "r", or "all") vs
-        radius across time for shot number shotNum. Can be saved to files (saveanim).'''
+    def makeAnimation(self, yvalue, saveAnim = True):
+        """Creates an animation of thompson data vs radius
+
+        Args:
+            yvalue (str): Can select "te", "ne", "r", or "all".
+            saveAnim (bool, optional): Saves animation to 'animations/{shotNum}{yvalue}.mp4'. Defaults to True.
+        """
+       
         if self.shotNum == "allShots":
             raise Exception("only run animation on single shot")
         if not self.client:
@@ -1209,7 +1233,7 @@ class Shot:
                         repeat=False) 
             fig.canvas.draw()
             anim.event_source.stop()
-            if saveanim:
+            if saveAnim:
                 anim.save('animations/'+self.shotNum+yvalue+'.mp4', writer = 'ffmpeg', fps = 22)
                 print("Saved " + self.shotNum+yvalue+'.mp4 in animations')
         
@@ -1225,5 +1249,4 @@ class Shot:
             createAnimation("r",self.r)
         elif yvalue == "ne":
             createAnimation("ne",self.ne)
-        else:
-            return
+
