@@ -126,7 +126,7 @@ class Shot:
     
     def fit(self, printtimes= False, plotvstime = False, printquantities = False,
 	    plotvsradius = False, plotvspsin = False, savepklforshot = False,
-	    presetTimes= [], savefigure = False, showfigure = False, psiN_ylim=[0.0, 200.0], psiN_xlim = [0.85, 1.05]):
+	    presetTimes= [], savefigure = False, showfigure = False):
         '''Pulls automatic fitting data for the given shot. Can print the time of each plot
         (printtimes). Automatically fits all time slices of a given shot, unless presetTimes is 
         given as a list of time points in seconds. Default is to plot vs psi_n (plotvspsin), but
@@ -496,10 +496,10 @@ class Shot:
                 ax1.plot((psin_ped_bot,psin_ped_bot),(0.0,ymax), lw=2, color='blue', linestyle=':')
                 ax1.set_xlabel("")
                 ax1.set_ylabel("$T_{e}$ (eV)",fontsize=fs)
-                #ax1.set_ylim([0.0, ymax])
-                ax1.set_ylim(psiN_ylim)
-                #ax1.set_xlim([0.9, 1.05])
-                ax1.set_xlim(psiN_xlim)
+                ax1.set_ylim([0.0, ymax])
+                # ax1.set_ylim(psiN_ylim)
+                ax1.set_xlim([0.9, 1.05])
+                # ax1.set_xlim(psiN_xlim)
                 ax1.tick_params(axis='x',labelsize=fs)
                 ax1.tick_params(axis='y',labelsize=fs)
                 ax1.tick_params(labelbottom=False)
