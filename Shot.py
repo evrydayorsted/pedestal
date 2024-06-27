@@ -117,7 +117,7 @@ class Shot:
             #neutral beam, Ip, toroidal magnetic field, stored energy, beta_N
 
             self.Ip        = client.get('epm/output/globalParameters/plasmacurrent',shot)
-            self.times_epm = Ip.time.data
+            self.times_epm = self.Ip.time.data
             #toroidal magnetic field (at axis)
             self.Btor      = client.get('epm/output/globalParameters/bphirmag',shot)
             self.betaN      = client.get('epm/output/globalParameters/betan',shot)
