@@ -269,7 +269,7 @@ class Shot:
         rbdy      = self.rbdy
         zbdy      = self.zbdy
         rmidin    = self.rmidin
-        rmidout   = self.midout
+        rmidout   = self.rmidout
         aminor    = self.aminor
         kappa     = self.kappa
         deltaup   = self.deltaup
