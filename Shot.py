@@ -74,8 +74,8 @@ class Shot:
                 if self.shotNum == "allShots":
                     self.shotByTimeSlice = pkldata['ShotNum']
                     self.IpTime = pkldata['IpTime']
-                    self.IpAdjusted = pkldata["IpTimeAdjusted"]
-                    self.IpMax = pkldata['IpMax']
+                    self.IpAdjusted = np.array(pkldata["IpTimeAdjusted"])
+                    self.IpMax = np.array(pkldata['IpMax'])
 
                 print("Pkl data loaded")
             except:
@@ -536,6 +536,7 @@ class Shot:
                 plt.tight_layout()
                 if saveFigure:
                     plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
+                    print("saved" + "plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
                 if showFigure:
                     plt.show()
 
@@ -916,8 +917,11 @@ class Shot:
             if saveFigure:
                 if plotName == "default":
                     plt.savefig("plots/"+outfilename+'.png')
+                    print("saved"+"plots/"+outfilename+'.png')
                 else:
                     plt.savefig("plots/"+plotName+'.png')
+                    print("saved"+"plots/"+plotName+'.png')
+
             if showFigure:
                 plt.title(str(totalPoints)+" equilibria")
                 plt.legend()
