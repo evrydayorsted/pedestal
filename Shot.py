@@ -72,6 +72,7 @@ class Shot:
                     self.IpTime = pkldata['IpTime']
                     self.IpAdjusted = pkldata["IpTimeAdjusted"]
                     self.IpMax = pkldata['IpMax']
+                    self.shotByTimeSlice = pkldata['ShotNum']
                 except:
                     print("Plasma Current data failed")
                 print("Pkl data loaded")
@@ -204,7 +205,8 @@ class Shot:
             showFigure (bool, optional): Displays figure in matplotlib window. Defaults to False.
        
         Adapted from pedestal_fit_parameters Jack Berkery 2023"""
-
+        if not self.client:
+            raise Exception("Must have pkl data to run contourPlot")
         te_ped_location = self.te_ped_location
         te_ped_height   = self.te_ped_height
         te_ped_width    = self.te_ped_width
