@@ -69,12 +69,14 @@ class Shot:
                 self.pkl = True
                 try:
                     self.Ip = pkldata['Ip']
+                except:
+                    print("Plasma Current data failed")
+                if self.shotNum == "allShots":
+                    self.shotByTimeSlice = pkldata['ShotNum']
                     self.IpTime = pkldata['IpTime']
                     self.IpAdjusted = pkldata["IpTimeAdjusted"]
                     self.IpMax = pkldata['IpMax']
-                    self.shotByTimeSlice = pkldata['ShotNum']
-                except:
-                    print("Plasma Current data failed")
+
                 print("Pkl data loaded")
             except:
                 print("Pkl data procurement failed")
