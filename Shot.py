@@ -516,7 +516,7 @@ class Shot:
                 ax2.plot((rped_ne_top,rped_ne_top),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.plot((rped_ne_bot,rped_ne_bot),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.set_ylabel("$n_{e}$ ($10^{19}$ m$^{-3}$)",fontsize=fs)
-                ax2.set_ylim([-10,1.20*numpy.max(ne_profile/1e19)])
+                ax2.set_ylim([0,1.20*numpy.max(ne_profile/1e19)])
                 ax2.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax2.tick_params(axis='x',labelsize=fs)
                 ax2.tick_params(axis='y',labelsize=fs)
@@ -757,11 +757,8 @@ class Shot:
                                                 (xquantity< xx[i+1]) &
                                                 (yquantity>=yy[j])   &
                                                 (yquantity< yy[j+1]) &
+                                                (self.IpAdjusted>IpMin*self.IpMax) &
                                                 (self.Beta_ped/self.W_ped >0.75) &
-                                                (self.W_ped_psin_te>0) &
-                                                (self.W_ped_psin_ne>0) &
-                                                (self.W_ped_psin_pe>0) &
-                                                (self.H_ped_psin_te>0) &
                                                 (self.H_ped_psin_ne>0) &
                                                 (self.H_ped_psin_pe>0) )
                         else:
@@ -769,32 +766,22 @@ class Shot:
                                                 (xquantity< xx[i+1]) &
                                                 (yquantity>=yy[j])   &
                                                 (yquantity< yy[j+1]) &
+                                                (self.IpAdjusted>IpMin*self.IpMax) &
                                                 (self.Beta_ped/self.W_ped >0.75))
                     elif posPed:
                         index, = np.where((xquantity>=xx[i])   & 
                                                 (xquantity< xx[i+1]) &
                                                 (yquantity>=yy[j])   &
-                                                (yquantity< yy[j+1]) &
-                                                (self.W_ped_psin_te>0) &
-                                                (self.W_ped_psin_ne>0) &
-                                                (self.W_ped_psin_pe>0) &
-                                                (self.H_ped_psin_te>0) &
+                                                (yquantity< yy[j+1]) &  
+                                                (self.IpAdjusted>IpMin*self.IpMax) &
                                                 (self.H_ped_psin_ne>0) &
                                                 (self.H_ped_psin_pe>0))
                     else:
                         index, = np.where((xquantity>=xx[i])   & 
                                                 (xquantity< xx[i+1]) &
                                                 (yquantity>=yy[j])   &
+                                                (self.IpAdjusted>IpMin*self.IpMax) &
                                                 (yquantity< yy[j+1]))  
-                    try:
-                        indexPlasmaCurrentFiltered = np.array([])
-                        for k in index:
-                            if self.IpAdjusted[k]>IpMin*self.IpMax[k]:
-                                indexPlasmaCurrentFiltered = np.append(indexPlasmaCurrentFiltered, [k])
-                        index = indexPlasmaCurrentFiltered.astype(int)
-                    
-                    except:
-                        print("fail")
                     if len(index) >= numMin:
                         totalPoints += len(index)
 
