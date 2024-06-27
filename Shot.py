@@ -272,7 +272,7 @@ class Shot:
         kappa     = self.kappa
         deltaup   = self.deltaup
         deltalow  = self.deltalow
-        #pmaxis    = self.pmaxis
+        #pmaxis    = self.pmaxisx
         #psibdy    = self.psibdy
 
         rprof     = self.rprof
@@ -810,7 +810,7 @@ class Shot:
             colorDict = {
                 "count":"viridis",
                 "elong":"rainbow",
-                "delta":"rainbow",
+                "delta":"plasma",
                 "pedestalHeight":"rainbow",
                 "pedestalSlope":"plasma"
             }
@@ -852,14 +852,15 @@ class Shot:
                 #plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
                 #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
                 #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
-                
+                # plt.plot(x_width, 0.75*x_width, "r")
                 #Provides a fit to the HMode data
-                plt.plot(x_width, 0.146*np.sqrt(x_width), label=r"$0.146\sqrt{\beta}$")
-                plt.plot(x_width, 0.104*x_width**0.309, label=r"$0.104\beta^{0.309}$")
-
+                
                 if fitHMode:
                     validXQuantity = np.array([])
                     validYQuantity = np.array([])
+                    # from smith paper
+                    # plt.plot(x_width, 0.146*np.sqrt(x_width), label=r"$0.146\sqrt{\beta}$")
+                    # plt.plot(x_width, 0.104*x_width**0.309, label=r"$0.104\beta^{0.309}$")
 
                     for i in range(len(xquantity)):
                         #filters which data points to fit
@@ -937,16 +938,16 @@ class Shot:
             xquantity    = self.W_ped
             xlabel       = r'$\Delta_{\mathrm{ped}}$'
             x1           = 0.0
-            x2           = 0.2
-            xticks       = 4
+            x2           = 0.15
+            xticks       = 3
             xminor       = 0.025
             xsize        = numPix
 
             yquantity    = self.Beta_ped
             ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
             y1           = 0.0
-            y2           = 0.35
-            yticks       = 7
+            y2           = 0.3
+            yticks       = 3
             yminor       = 0.025
             ysize        = numPix
 
@@ -959,16 +960,16 @@ class Shot:
             xquantity    = self.W_ped_psin_te
             xlabel       = r'$\Delta_{\mathrm{ped,Te}}$'
             x1           = 0.0
-            x2           = 0.2
-            xticks       = 4
+            x2           = 0.15
+            xticks       = 3
             xminor       = 0.025
             xsize        = numPix
 
             yquantity    = self.H_ped_psin_te/1000.0
             ylabel       = r'$T_{\mathrm{e,ped}}$ (keV)'
             y1           = 0.0
-            y2           = 0.3
-            yticks       = 3
+            y2           = 0.4
+            yticks       = 4
             yminor       = 0.05
             ysize        = numPix
 
@@ -981,9 +982,9 @@ class Shot:
             xquantity    = self.W_ped_psin_ne
             xlabel       = r'$\Delta_{\mathrm{ped,ne}}$'
             x1           = 0.0
-            x2           = 0.2
-            xticks       = 4
-            xminor       = 0.025
+            x2           = 0.15
+            xticks       = 3
+            xminor       = 0.05
             xsize        = numPix
 
             yquantity    = self.H_ped_psin_ne/1.0e20
@@ -1133,18 +1134,18 @@ class Shot:
 
             xquantity    = self.elong
             xlabel       = r'$\kappa$'
-            x1           = 1
-            x2           = 3
+            x1           = 1.5
+            x2           = 2.5
             xticks       = 4
-            xminor       = 0.025
+            xminor       = 0.25
             xsize        = numPix
 
             yquantity    = self.delta
             ylabel       = r'$\delta$'
-            y1           = 0
-            y2           = 0.75
-            yticks       = 3
-            yminor       = 0.025
+            y1           = 0.3
+            y2           = 0.7
+            yticks       = 4
+            yminor       = 0.05
             ysize        = numPix
 
         #ne vs te
@@ -1153,8 +1154,8 @@ class Shot:
             xquantity    = self.H_ped_psin_ne/1.0e20
             xlabel       = r'$n_{\mathrm{e,ped}}$ ($10^{20}$ m$^{-3}$)'
             x1           = 0.0
-            x2           = 0.7
-            xticks       = 7
+            x2           = 0.6
+            xticks       = 3
             xminor       = 0.05
             xsize        = numPix
 
