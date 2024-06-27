@@ -516,7 +516,7 @@ class Shot:
                 ax2.plot((rped_ne_top,rped_ne_top),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.plot((rped_ne_bot,rped_ne_bot),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.set_ylabel("$n_{e}$ ($10^{19}$ m$^{-3}$)",fontsize=fs)
-                ax2.set_ylim([-10,1.20*numpy.max(ne_profile/1e19)])
+                ax2.set_ylim([-10,1.20*numpy.max(ne_profile/1e19)+1])
                 ax2.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax2.tick_params(axis='x',labelsize=fs)
                 ax2.tick_params(axis='y',labelsize=fs)
