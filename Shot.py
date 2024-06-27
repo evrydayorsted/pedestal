@@ -81,98 +81,98 @@ class Shot:
         def clientDownload(self):
             '''Function to pull data from client. Should only be used for a single shot.'''
             print("Getting data from client for " +self.shotNum)
-        # try:
-            client = pyuda.Client()
+            try:
+                client = pyuda.Client()
 
-            # Defining shot based off of class instance
-            shot = self.shotNum
+                # Defining shot based off of class instance
+                shot = self.shotNum
 
-            # Pull fit data from client
-            group = "/apf/core/mtanh/lfs/"
+                # Pull fit data from client
+                group = "/apf/core/mtanh/lfs/"
 
-            self.te_ped_location = client.get(group + "t_e/pedestal_location", shot)
-            self.te_ped_height   = client.get(group + "t_e/pedestal_height", shot)
-            self.te_ped_width    = client.get(group + "t_e/pedestal_width", shot)
-            self.te_ped_top_grad = client.get(group + "t_e/pedestal_top_gradient", shot)
-            self.te_background   = client.get(group + "t_e/background_level", shot)
+                self.te_ped_location = client.get(group + "t_e/pedestal_location", shot)
+                self.te_ped_height   = client.get(group + "t_e/pedestal_height", shot)
+                self.te_ped_width    = client.get(group + "t_e/pedestal_width", shot)
+                self.te_ped_top_grad = client.get(group + "t_e/pedestal_top_gradient", shot)
+                self.te_background   = client.get(group + "t_e/background_level", shot)
 
-            self.times_apf       = self.te_ped_location.time.data
+                self.times_apf       = self.te_ped_location.time.data
 
-            self.ne_ped_location = client.get(group + "n_e/pedestal_location", shot)
-            self.ne_ped_height   = client.get(group + "n_e/pedestal_height", shot)
-            self.ne_ped_width    = client.get(group + "n_e/pedestal_width", shot)
-            self.ne_ped_top_grad = client.get(group + "n_e/pedestal_top_gradient", shot)
-            self.ne_background   = client.get(group + "n_e/background_level", shot)
+                self.ne_ped_location = client.get(group + "n_e/pedestal_location", shot)
+                self.ne_ped_height   = client.get(group + "n_e/pedestal_height", shot)
+                self.ne_ped_width    = client.get(group + "n_e/pedestal_width", shot)
+                self.ne_ped_top_grad = client.get(group + "n_e/pedestal_top_gradient", shot)
+                self.ne_background   = client.get(group + "n_e/background_level", shot)
 
-            self.pe_ped_location = client.get(group + "p_e/pedestal_location", shot)
-            self.pe_ped_height   = client.get(group + "p_e/pedestal_height", shot)
-            self.pe_ped_width    = client.get(group + "p_e/pedestal_width", shot)
-            self.pe_ped_top_grad = client.get(group + "p_e/pedestal_top_gradient", shot)
-            self.pe_background   = client.get(group + "p_e/background_level", shot)
-            print("done parameters")
+                self.pe_ped_location = client.get(group + "p_e/pedestal_location", shot)
+                self.pe_ped_height   = client.get(group + "p_e/pedestal_height", shot)
+                self.pe_ped_width    = client.get(group + "p_e/pedestal_width", shot)
+                self.pe_ped_top_grad = client.get(group + "p_e/pedestal_top_gradient", shot)
+                self.pe_background   = client.get(group + "p_e/background_level", shot)
+                print("done parameters")
 
 
-            # EPM: EFIT++
+                # EPM: EFIT++
 
-            #neutral beam, Ip, toroidal magnetic field, stored energy, beta_N
+                #neutral beam, Ip, toroidal magnetic field, stored energy, beta_N
 
-            self.Ip        = client.get('epm/output/globalParameters/plasmacurrent',shot)
-            self.times_epm = self.Ip.time.data
-            #toroidal magnetic field (at axis)
-            self.Btor      = client.get('epm/output/globalParameters/bphirmag',shot)
-            self.betaN      = client.get('epm/output/globalParameters/betan',shot)
-            # storedEnergy (joules)
-            self.plasmaEnergy      = client.get('epm/output/globalParameters/plasmaEnergy',shot)
+                self.Ip        = client.get('epm/output/globalParameters/plasmacurrent',shot)
+                self.times_epm = self.Ip.time.data
+                #toroidal magnetic field (at axis)
+                self.Btor      = client.get('epm/output/globalParameters/bphirmag',shot)
+                self.betaN      = client.get('epm/output/globalParameters/betan',shot)
+                # storedEnergy (joules)
+                self.plasmaEnergy      = client.get('epm/output/globalParameters/plasmaEnergy',shot)
 
-            self.rmaxis    = client.get('epm/output/globalParameters/magneticAxis/R',shot)
-            self.zmaxis    = client.get('epm/output/globalParameters/magneticAxis/Z',shot)
-            self.rbdy      = client.get('epm/output/separatrixGeometry/rboundary',shot)
-            self.zbdy      = client.get('epm/output/separatrixGeometry/zboundary',shot)
-            self.rmidin    = client.get('epm/output/separatrixGeometry/rmidplaneIn',shot)
-            self.rmidout   = client.get('epm/output/separatrixGeometry/rmidplaneOut',shot)
-            self.aminor    = client.get('epm/output/separatrixGeometry/minorRadius',shot)
-            self.kappa     = client.get('epm/output/separatrixGeometry/elongation',shot)
-            self.deltaup   = client.get('epm/output/separatrixGeometry/upperTriangularity',shot)
-            self.deltalow  = client.get('epm/output/separatrixGeometry/lowerTriangularity',shot)
-            #self.pmaxis    = client.get('epm/output/globalParameters/psiAxis',shot)
-            #self.psibdy    = client.get('epm/output/globalParameters/psiBoundary',shot)
+                self.rmaxis    = client.get('epm/output/globalParameters/magneticAxis/R',shot)
+                self.zmaxis    = client.get('epm/output/globalParameters/magneticAxis/Z',shot)
+                self.rbdy      = client.get('epm/output/separatrixGeometry/rboundary',shot)
+                self.zbdy      = client.get('epm/output/separatrixGeometry/zboundary',shot)
+                self.rmidin    = client.get('epm/output/separatrixGeometry/rmidplaneIn',shot)
+                self.rmidout   = client.get('epm/output/separatrixGeometry/rmidplaneOut',shot)
+                self.aminor    = client.get('epm/output/separatrixGeometry/minorRadius',shot)
+                self.kappa     = client.get('epm/output/separatrixGeometry/elongation',shot)
+                self.deltaup   = client.get('epm/output/separatrixGeometry/upperTriangularity',shot)
+                self.deltalow  = client.get('epm/output/separatrixGeometry/lowerTriangularity',shot)
+                #self.pmaxis    = client.get('epm/output/globalParameters/psiAxis',shot)
+                #self.psibdy    = client.get('epm/output/globalParameters/psiBoundary',shot)
 
-            self.rprof     = client.get('epm/output/radialprofiles/R',shot)
-            self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',shot)
+                self.rprof     = client.get('epm/output/radialprofiles/R',shot)
+                self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',shot)
 
-            self.r_2D      = client.get('epm/output/profiles2D/R',shot)
-            self.z_2D      = client.get('epm/output/profiles2D/Z',shot)
-            self.psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
-            self.psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
-            print('done efit')
-            #in megawatts
-            #self.total_NBI_power = client.get('anb/sum/power', shot)
+                self.r_2D      = client.get('epm/output/profiles2D/R',shot)
+                self.z_2D      = client.get('epm/output/profiles2D/Z',shot)
+                self.psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
+                self.psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
+                print('done efit')
+                #in megawatts
+                #self.total_NBI_power = client.get('anb/sum/power', shot)
 
-            self.te   = client.get('/ayc/t_e',self.shotNum)
-            print("te downloaded")
-            self.dte  = client.get('/ayc/dt_e',self.shotNum)
-            print("dte downloaded")
-            self.ne   = client.get('/ayc/n_e',self.shotNum)
-            print("ne downloaded")
-            self.dne  = client.get('/ayc/dn_e',self.shotNum)
-            print("dne downloaded")
-            self.r    = client.get('/ayc/r',self.shotNum)
-            print("r downloaded")
-            self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',self.shotNum)
-            print("psinprof downloaded")
-            self.rprof     = client.get('epm/output/radialprofiles/R',self.shotNum)
-            print("rprof downloaded")
-            self.times_ayc = self.te.time.data
-            self.client = True
-            Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
-            self.Ip = np.nan_to_num(Ip.data)
-            
-            self.IpTime = Ip.time.data
-            print("plasma current loaded")
-            print("All data downloaded from client")
-        # except:
-            print("Client connection failed.")
-
+                self.te   = client.get('/ayc/t_e',self.shotNum)
+                print("te downloaded")
+                self.dte  = client.get('/ayc/dt_e',self.shotNum)
+                print("dte downloaded")
+                self.ne   = client.get('/ayc/n_e',self.shotNum)
+                print("ne downloaded")
+                self.dne  = client.get('/ayc/dn_e',self.shotNum)
+                print("dne downloaded")
+                self.r    = client.get('/ayc/r',self.shotNum)
+                print("r downloaded")
+                self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',self.shotNum)
+                print("psinprof downloaded")
+                self.rprof     = client.get('epm/output/radialprofiles/R',self.shotNum)
+                print("rprof downloaded")
+                self.times_ayc = self.te.time.data
+                self.client = True
+                Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
+                self.Ip = np.nan_to_num(Ip.data)
+                
+                self.IpTime = Ip.time.data
+                print("plasma current loaded")
+                print("All data downloaded from client")
+            except:
+                print("Client connection failed.")
+    
         # Run the appropriate data pulls
         if datatype == "pkl":
             pklDownload(self)
