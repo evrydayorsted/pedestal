@@ -206,7 +206,7 @@ class Shot:
        
         Adapted from pedestal_fit_parameters Jack Berkery 2023"""
         if not self.client:
-            raise Exception("Must have pkl data to run contourPlot")
+            raise Exception("Must have client data to run fit")
         te_ped_location = self.te_ped_location
         te_ped_height   = self.te_ped_height
         te_ped_width    = self.te_ped_width
