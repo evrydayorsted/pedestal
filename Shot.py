@@ -482,6 +482,11 @@ class Shot:
                 #print("Time     = ",times_apf[time_index_apf])
                 print("W_ped    = ",wped_psin)
                 print("beta_ped = ",beta)
+                print("W", W_ped_psin_te)
+                print("H_ped_psin_te/1000.0", H_ped_psin_te/1000.0)
+                print("W_ped_psin_ne", W_ped_psin_ne)
+                print("H_ped_psin_ne/1.0e20", H_ped_psin_ne/1.0e20)
+
                 print("")
 
             fs = 16
@@ -536,7 +541,7 @@ class Shot:
                 plt.tight_layout()
                 if saveFigure:
                     plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
-                    print("saved" + "plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
+                    print("saved " + "plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
                 if showFigure:
                     plt.show()
 
@@ -611,6 +616,7 @@ class Shot:
                 plt.tight_layout()
                 if saveFigure:
                     plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsPsiN.png")
+                    print("saved " + "plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsPsiN.png")
                 if showFigure:
                     plt.show()
 
@@ -917,10 +923,10 @@ class Shot:
             if saveFigure:
                 if plotName == "default":
                     plt.savefig("plots/"+outfilename+'.png')
-                    print("saved"+"plots/"+outfilename+'.png')
+                    print("saved "+"plots/"+outfilename+'.png')
                 else:
                     plt.savefig("plots/"+plotName+'.png')
-                    print("saved"+"plots/"+plotName+'.png')
+                    print("saved "+"plots/"+plotName+'.png')
 
             if showFigure:
                 plt.title(str(totalPoints)+" equilibria")
