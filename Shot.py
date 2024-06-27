@@ -516,7 +516,7 @@ class Shot:
                 ax2.plot((rped_ne_top,rped_ne_top),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.plot((rped_ne_bot,rped_ne_bot),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.set_ylabel("$n_{e}$ ($10^{19}$ m$^{-3}$)",fontsize=fs)
-                ax2.set_ylim([0.,1.20*numpy.max(ne_profile/1e19)])
+                ax2.set_ylim([-10,1.20*numpy.max(ne_profile/1e19)])
                 ax2.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax2.tick_params(axis='x',labelsize=fs)
                 ax2.tick_params(axis='y',labelsize=fs)
@@ -661,7 +661,7 @@ class Shot:
 
 
     def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 60,
-                    cbarMax =2, cbarMin=0, numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = True):
+                    cbarMax =2, cbarMin=0, numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = True, posPed = True):
         """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
         Args:
@@ -686,6 +686,7 @@ class Shot:
             cbarMax (int, optional): Maximum value of the colorbar. Values above this value will take on the max valued color. Defaults to 2.
             cbarMin (int, optional): Minimum value of the colorbar. Values below this value will be white. Defaults to 0.
             numMin (int, optional): Minimum number of equilibria in a pixel for the pixel to show up. Defaults to 10.
+            posPed(bool, optional): Removes points with negative pedestal height. Defaults to True.
             countType (str, optional): Determines what parameter will be colored by the colorbar.\n
             "count" - log10 number of equilibria in the pixel\n
             "elong" - average elongation of the equilibria in the pixel\n
@@ -750,19 +751,41 @@ class Shot:
             for i in range(0,len(xx)-1):
                 for j in range(0,len(yy)-1):
                     #Can add additional conditions here to filter what is shown in contour
-                    if lowSlopeFilter == True:
+                    if lowSlopeFilter:
+                        if posPed:
+                            index, = np.where((xquantity>=xx[i])   & 
+                                                (xquantity< xx[i+1]) &
+                                                (yquantity>=yy[j])   &
+                                                (yquantity< yy[j+1]) &
+                                                (self.Beta_ped/self.W_ped >0.75) &
+                                                (self.W_ped_psin_te>0) &
+                                                (self.W_ped_psin_ne>0) &
+                                                (self.W_ped_psin_pe>0) &
+                                                (self.H_ped_psin_te>0) &
+                                                (self.H_ped_psin_ne>0) &
+                                                (self.H_ped_psin_pe>0) )
+                        else:
+                            index, = np.where((xquantity>=xx[i])   & 
+                                                (xquantity< xx[i+1]) &
+                                                (yquantity>=yy[j])   &
+                                                (yquantity< yy[j+1]) &
+                                                (self.Beta_ped/self.W_ped >0.75))
+                    elif posPed:
                         index, = np.where((xquantity>=xx[i])   & 
-                                            (xquantity< xx[i+1]) &
-                                            (yquantity>=yy[j])   &
-                                            (yquantity< yy[j+1]) &
-                                            (self.Beta_ped/self.W_ped >0.75)) 
-                
-                    else:   
+                                                (xquantity< xx[i+1]) &
+                                                (yquantity>=yy[j])   &
+                                                (yquantity< yy[j+1]) &
+                                                (self.W_ped_psin_te>0) &
+                                                (self.W_ped_psin_ne>0) &
+                                                (self.W_ped_psin_pe>0) &
+                                                (self.H_ped_psin_te>0) &
+                                                (self.H_ped_psin_ne>0) &
+                                                (self.H_ped_psin_pe>0))
+                    else:
                         index, = np.where((xquantity>=xx[i])   & 
-                                            (xquantity< xx[i+1]) &
-                                            (yquantity>=yy[j])   &
-                                            (yquantity< yy[j+1])) 
-                
+                                                (xquantity< xx[i+1]) &
+                                                (yquantity>=yy[j])   &
+                                                (yquantity< yy[j+1]))  
                     try:
                         indexPlasmaCurrentFiltered = np.array([])
                         for k in index:
@@ -941,16 +964,16 @@ class Shot:
 
             xquantity    = self.W_ped
             xlabel       = r'$\Delta_{\mathrm{ped}}$'
-            x1           = 0.0
-            x2           = 0.15
+            x1           = -0.1
+            x2           = 1
             xticks       = 3
             xminor       = 0.025
             xsize        = numPix
 
             yquantity    = self.Beta_ped
             ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
-            y1           = 0.0
-            y2           = 0.3
+            y1           = -0.1
+            y2           =1
             yticks       = 3
             yminor       = 0.025
             ysize        = numPix
@@ -993,7 +1016,7 @@ class Shot:
 
             yquantity    = self.H_ped_psin_ne/1.0e20
             ylabel       = r'$n_{\mathrm{e,ped}}$ ($10^{20}$ m$^{-3}$)'
-            y1           = 0.0
+            y1           = 0
             y2           = 0.6
             yticks       = 3
             yminor       = 0.05
@@ -1138,7 +1161,7 @@ class Shot:
 
             xquantity    = self.elong
             xlabel       = r'$\kappa$'
-            x1           = 1.5
+            x1           = 0
             x2           = 2.5
             xticks       = 4
             xminor       = 0.25
@@ -1146,7 +1169,7 @@ class Shot:
 
             yquantity    = self.delta
             ylabel       = r'$\delta$'
-            y1           = 0.3
+            y1           = 0
             y2           = 0.7
             yticks       = 4
             yminor       = 0.05
