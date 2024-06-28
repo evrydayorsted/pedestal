@@ -522,7 +522,8 @@ class Shot:
                 ax1.plot((rped_te_bot,rped_te_bot),(0.0,teped), lw=2, color='black', linestyle=':')
                 ax1.set_xlabel("")
                 ax1.set_ylabel("$T_{e}$ (eV)",fontsize=fs)
-                ax1.set_ylim([0.,1.20*numpy.max(te_profile)])
+                ax1.set_ylim([0, 400])
+                # ax1.set_ylim([0.,1.20*numpy.max(te_profile)])
                 ax1.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax1.tick_params(axis='x',labelsize=fs)
                 ax1.tick_params(axis='y',labelsize=fs)
@@ -534,7 +535,8 @@ class Shot:
                 ax2.plot((rped_ne_top,rped_ne_top),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.plot((rped_ne_bot,rped_ne_bot),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.set_ylabel("$n_{e}$ ($10^{19}$ m$^{-3}$)",fontsize=fs)
-                ax2.set_ylim([0,1.20*numpy.max(ne_profile/1e19)])
+                # ax2.set_ylim([0,1.20*numpy.max(ne_profile/1e19)])
+                ax2.set_ylim([0, 6])
                 ax2.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax2.tick_params(axis='x',labelsize=fs)
                 ax2.tick_params(axis='y',labelsize=fs)
@@ -780,7 +782,9 @@ class Shot:
                                                 (self.IpAdjusted>IpMin*self.IpMax) &
                                                 (self.Beta_ped/self.W_ped >0.75) &
                                                 (self.H_ped_psin_ne>0) &
-                                                (self.H_ped_psin_pe>0) )
+                                                (self.H_ped_psin_pe>0) &
+                                                (self.delta>0.46) &
+                                                (self.delta<0.48))
                         else:
                             index, = np.where((xquantity>=xx[i])   & 
                                                 (xquantity< xx[i+1]) &
@@ -974,16 +978,16 @@ class Shot:
 
             xquantity    = self.W_ped
             xlabel       = r'$\Delta_{\mathrm{ped}}$'
-            x1           = -0.1
-            x2           = 1
+            x1           = 0
+            x2           = 0.15
             xticks       = 3
             xminor       = 0.025
             xsize        = numPix
 
             yquantity    = self.Beta_ped
             ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
-            y1           = -0.1
-            y2           =1
+            y1           = 0
+            y2           =0.3
             yticks       = 3
             yminor       = 0.025
             ysize        = numPix
@@ -1204,6 +1208,26 @@ class Shot:
             yticks       = 5
             yminor       = 0.05
             ysize        = numPix
+
+        # pressure cont vs temp cont
+        if plotnumber == 12:
+            outfilename = "FactorsVsDelta"
+            yquantity    = (self.H_ped_psin_ne/1.0e20/self.W_ped_psin_ne*self.H_ped_psin_te/1000.0)/(self.H_ped_psin_ne/1.0e20*self.H_ped_psin_te/1000.0/self.W_ped_psin_te)
+            ylabel       = r'1/2'
+            y1           = -100
+            y2           = 100
+            yticks       = 3
+            yminor       = 10
+            ysize        = numPix
+
+
+            xquantity    = self.W_ped
+            xlabel       = r'$\Delta_{\mathrm{ped}}$'
+            x1           = -1
+            x2           = 1
+            xticks       = 3
+            xminor       = 0.025
+            xsize        = numPix
 
 
 
