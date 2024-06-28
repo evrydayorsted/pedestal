@@ -1269,7 +1269,7 @@ class Shot:
                     title = "Shot "+self.shotNum+": "+yvalue+" vs. Radius")
             
             # initializing a frame 
-            pedPlot, = axis.plot([], [], lw = 3)  
+            pedPlot, = axis.plot([], [], ".")  
             
             # data which the line will  
             # contain (x, y) 
@@ -1287,7 +1287,7 @@ class Shot:
                 
                 y = yparam.data[i,:]
                 pedPlot.set_data(x, y) 
-                
+                pedPlot.set_title(str(i))
                 return pedPlot, 
 
             anim = animation.FuncAnimation(fig, animate, init_func = init, 
