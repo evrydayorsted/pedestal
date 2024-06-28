@@ -574,7 +574,7 @@ class Shot:
                 ax1.set_ylabel("$T_{e}$ (eV)",fontsize=fs)
                 ax1.set_ylim([0.0, ymax])
                 # ax1.set_ylim(psiN_ylim)
-                ax1.set_xlim([0.9, 1.05])
+                ax1.set_xlim([0.85, 1.05])
                 # ax1.set_xlim(psiN_xlim)
                 ax1.tick_params(axis='x',labelsize=fs)
                 ax1.tick_params(axis='y',labelsize=fs)
