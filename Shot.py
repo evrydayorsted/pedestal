@@ -158,7 +158,7 @@ class Shot:
                 self.psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
                 print("20/20 efit parameters loaded", end="\r")
 
-                self.psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
+                #self.psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
                 print("All efit parameters loaded       ", end="\n")
                 
                 #in megawatts
@@ -299,7 +299,7 @@ class Shot:
         r_2D      = self.r_2D
         z_2D      = self.z_2D
         psin_2D   = self.psin_2D
-        psi_2D    = self.psi_2D
+        #psi_2D    = self.psi_2D
         #in megawatts
         #total_NBI_power = self.total_NBI_power
         ultimatemintime = 0.1
