@@ -144,13 +144,23 @@ class Shot:
                 print("15/20 efit parameters loaded", end="\r")
 
                 self.rprof     = client.get('epm/output/radialprofiles/R',shot)
+                print("16/20 efit parameters loaded", end="\r")
+
                 self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',shot)
+                print("17/20 efit parameters loaded", end="\r")
 
                 self.r_2D      = client.get('epm/output/profiles2D/R',shot)
+                print("18/20 efit parameters loaded", end="\r")
+
                 self.z_2D      = client.get('epm/output/profiles2D/Z',shot)
+                print("19/20 efit parameters loaded", end="\r")
+
                 self.psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
+                print("20/20 efit parameters loaded", end="\r")
+
                 self.psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
-                print('done efit')
+                print("All efit parameters loaded       ", end="\n")
+                
                 #in megawatts
                 #self.total_NBI_power = client.get('anb/sum/power', shot)
 
