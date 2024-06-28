@@ -1287,7 +1287,6 @@ class Shot:
                 
                 y = yparam.data[i,:]
                 pedPlot.set_data(x, y) 
-                pedPlot.set_title(str(i))
                 return pedPlot, 
 
             anim = animation.FuncAnimation(fig, animate, init_func = init, 
