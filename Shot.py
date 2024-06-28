@@ -165,26 +165,25 @@ class Shot:
                 #self.total_NBI_power = client.get('anb/sum/power', shot)
 
                 self.te   = client.get('/ayc/t_e',self.shotNum)
-                print("te downloaded")
+                print("1/6 ayc parameters loaded", end="\r")
                 self.dte  = client.get('/ayc/dt_e',self.shotNum)
-                print("dte downloaded")
+                print("2/6 ayc parameters loaded", end="\r")
                 self.ne   = client.get('/ayc/n_e',self.shotNum)
-                print("ne downloaded")
+                print("3/6 ayc parameters loaded", end="\r")
                 self.dne  = client.get('/ayc/dn_e',self.shotNum)
-                print("dne downloaded")
+                print("4/6 ayc parameters loaded", end="\r")
                 self.r    = client.get('/ayc/r',self.shotNum)
-                print("r downloaded")
+                print("5/6 ayc parameters loaded", end="\r")
                 self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',self.shotNum)
-                print("psinprof downloaded")
+                print("6/6 ayc parameters loaded", end="\r")
                 self.rprof     = client.get('epm/output/radialprofiles/R',self.shotNum)
-                print("rprof downloaded")
+                print("all ayc parameters loaded     ", end="\n")
                 self.times_ayc = self.te.time.data
                 self.client = True
                 Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
                 self.Ip = np.nan_to_num(Ip.data)
                 
                 self.IpTime = Ip.time.data
-                print("plasma current loaded")
                 print("All data downloaded from client")
             except:
                 print("Client connection failed.")
