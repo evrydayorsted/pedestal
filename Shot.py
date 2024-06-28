@@ -125,12 +125,15 @@ class Shot:
                 self.betaN      = client.get('epm/output/globalParameters/betan',shot)
                 # storedEnergy (joules)
                 self.plasmaEnergy      = client.get('epm/output/globalParameters/plasmaEnergy',shot)
+                print("5/20 efit parameters loaded", end="\r")
 
                 self.rmaxis    = client.get('epm/output/globalParameters/magneticAxis/R',shot)
                 self.zmaxis    = client.get('epm/output/globalParameters/magneticAxis/Z',shot)
                 self.rbdy      = client.get('epm/output/separatrixGeometry/rboundary',shot)
                 self.zbdy      = client.get('epm/output/separatrixGeometry/zboundary',shot)
                 self.rmidin    = client.get('epm/output/separatrixGeometry/rmidplaneIn',shot)
+                print("10/20 efit parameters loaded", end="\r")
+
                 self.rmidout   = client.get('epm/output/separatrixGeometry/rmidplaneOut',shot)
                 self.aminor    = client.get('epm/output/separatrixGeometry/minorRadius',shot)
                 self.kappa     = client.get('epm/output/separatrixGeometry/elongation',shot)
@@ -138,6 +141,7 @@ class Shot:
                 self.deltalow  = client.get('epm/output/separatrixGeometry/lowerTriangularity',shot)
                 #self.pmaxis    = client.get('epm/output/globalParameters/psiAxis',shot)
                 #self.psibdy    = client.get('epm/output/globalParameters/psiBoundary',shot)
+                print("15/20 efit parameters loaded", end="\r")
 
                 self.rprof     = client.get('epm/output/radialprofiles/R',shot)
                 self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',shot)
