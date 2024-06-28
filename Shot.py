@@ -1262,7 +1262,7 @@ class Shot:
             
             # marking the x-axis and y-axis 
             
-            axis = plt.axes(xlim =(1.2, 1.5),  
+            axis = plt.axes(xlim =(0.8, 1),  
                         ylim =(minimum - 0.1*spread, maximum + 0.1*spread),
                     xlabel="Radius (m?)",
                     ylabel = yvalue,
