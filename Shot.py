@@ -39,47 +39,50 @@ class Shot:
         def pklDownload(self):
             """Pulls data from pkl file 'output/MAST_U_pedestal_{#}.pkl' or 'output/MAST_U_pedestal_allShots.pkl'"""
             
+           # try:
+            #download pkl
+            filename = 'outputWithBeamPower/MAST-U_pedestal_'+self.shotNum+'.pkl'
+            infile = open(filename, 'rb')
+            print(infile)
+            pkldata = pickle.load(infile)
+            print("test")
+            infile.close()
+            
+            #read off values
+            self.shot = pkldata['Shot']
+            self.times = pkldata['Times']
+            self.W_ped = pkldata['W_ped']
+            self.Beta_ped = pkldata['Beta_ped']
+            self.W_ped_psin_te = pkldata['W_ped_psin_te']
+            self.W_ped_psin_ne = pkldata['W_ped_psin_ne']
+            self.W_ped_psin_pe = pkldata['W_ped_psin_pe']
+            self.H_ped_psin_te = pkldata['H_ped_psin_te']
+            self.H_ped_psin_ne = pkldata['H_ped_psin_ne']
+            self.H_ped_psin_pe = pkldata['H_ped_psin_pe']
+            self.W_ped_radius_te = pkldata['W_ped_radius_te']
+            self.W_ped_radius_ne = pkldata['W_ped_radius_ne']
+            self.W_ped_radius_pe = pkldata['W_ped_radius_pe']
+            self.H_ped_radius_te = pkldata['H_ped_radius_te']
+            self.H_ped_radius_ne = pkldata['H_ped_radius_ne']
+            self.H_ped_radius_pe = pkldata['H_ped_radius_pe']
+            self.Aratio = pkldata['Aratio']
+            self.elong  = pkldata['elong']
+            self.delta = pkldata['delta']
+            self.pkl = True
             try:
-                #download pkl
-                filename = 'outputWithPlasmaCurrent/MAST-U_pedestal_'+self.shotNum+'.pkl'
-                infile = open(filename, 'rb')
-                pkldata = pickle.load(infile)
-                infile.close()
-                
-                #read off values
-                self.shot = pkldata['Shot']
-                self.times = pkldata['Times']
-                self.W_ped = pkldata['W_ped']
-                self.Beta_ped = pkldata['Beta_ped']
-                self.W_ped_psin_te = pkldata['W_ped_psin_te']
-                self.W_ped_psin_ne = pkldata['W_ped_psin_ne']
-                self.W_ped_psin_pe = pkldata['W_ped_psin_pe']
-                self.H_ped_psin_te = pkldata['H_ped_psin_te']
-                self.H_ped_psin_ne = pkldata['H_ped_psin_ne']
-                self.H_ped_psin_pe = pkldata['H_ped_psin_pe']
-                self.W_ped_radius_te = pkldata['W_ped_radius_te']
-                self.W_ped_radius_ne = pkldata['W_ped_radius_ne']
-                self.W_ped_radius_pe = pkldata['W_ped_radius_pe']
-                self.H_ped_radius_te = pkldata['H_ped_radius_te']
-                self.H_ped_radius_ne = pkldata['H_ped_radius_ne']
-                self.H_ped_radius_pe = pkldata['H_ped_radius_pe']
-                self.Aratio = pkldata['Aratio']
-                self.elong  = pkldata['elong']
-                self.delta = pkldata['delta']
-                self.pkl = True
-                try:
-                    self.Ip = pkldata['Ip']
-                except:
-                    print("Plasma Current data failed")
-                self.shotByTimeSlice = pkldata['ShotNum']
-                self.IpTime = pkldata['IpTime']
-                #interpolated to thomson times
-                self.IpAdjusted = np.array(pkldata["IpTimeAdjusted"])
-                self.IpMax = np.array(pkldata['IpMax'])
-
-                print("Pkl data loaded")
+                self.Ip = pkldata['Ip']
             except:
-                print("Pkl data procurement failed")
+                print("Plasma Current data failed")
+            self.shotByTimeSlice = pkldata['ShotNum']
+            self.IpTime = pkldata['IpTime']
+            #interpolated to thomson times
+            self.IpAdjusted = np.array(pkldata["IpTimeAdjusted"])
+            self.IpMax = np.array(pkldata['IpMax'])
+
+            print("Pkl data loaded")
+            # except Exception as error:
+            #     print(error)
+            #     print("Pkl data procurement failed")
         def clientDownload(self):
             '''Function to pull data from client. Should only be used for a single shot.'''
             print("Getting data from client for " +self.shotNum)
