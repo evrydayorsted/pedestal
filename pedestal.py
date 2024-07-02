@@ -1,3 +1,6 @@
+print("Importing libraries...")
+print("\n\n")
+
 import matplotlib
 import matplotlib.cm
 import matplotlib.pyplot as plt
@@ -23,6 +26,10 @@ try:
 except:
     print("pyuda connection failed")
 
+print("\n\n")
+print("Libraries imported.")
+print("\n\n")
+
 class Shot:
     def __init__(self, shotNum, datatype):
         """Initializes shot object
@@ -41,7 +48,7 @@ class Shot:
         # Define functions to pull data
         def pklDownload(self):
             """Pulls data from pkl file 'output/MAST_U_pedestal_{#}.pkl' or 'output/MAST_U_pedestal_allShots.pkl'"""
-            
+            print("Downloading pkl data...")
             try:
                 #download pkl
                 filename = 'outputWithBeamPower/MAST-U_pedestal_'+self.shotNum+'.pkl'
@@ -77,12 +84,16 @@ class Shot:
                 self.NBI = pkldata["NBI"]
 
                 print("Pkl data loaded")
+                print("\n\n")
+
             except Exception as error:
                 print(error)
                 print("Pkl data procurement failed")
+                print("\n\n")
+
         def clientDownload(self):
             '''Function to pull data from client. Should only be used for a single shot.'''
-            print("Getting data from client for " +self.shotNum)
+            print("Getting data from client for " +self.shotNum+" ...")
             try:
                 client = pyuda.Client()
 
@@ -111,7 +122,7 @@ class Shot:
                 self.pe_ped_width    = client.get(group + "p_e/pedestal_width", shot)
                 self.pe_ped_top_grad = client.get(group + "p_e/pedestal_top_gradient", shot)
                 self.pe_background   = client.get(group + "p_e/background_level", shot)
-                print("done parameters")
+                print("Done downloading pedestal parameters")
 
 
                 # EPM: EFIT++
@@ -159,7 +170,7 @@ class Shot:
                 print("20/20 efit parameters loaded", end="\r")
 
                 #self.psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
-                print("All efit parameters loaded       ", end="\n")
+                print("Done downloading efit parameters", end="\n")
                 
                 #in megawatts
                 try:
@@ -180,14 +191,14 @@ class Shot:
                 self.psinprof  = client.get('epm/output/radialprofiles/normalizedpoloidalflux',self.shotNum)
                 print("6/6 ayc parameters loaded", end="\r")
                 self.rprof     = client.get('epm/output/radialprofiles/R',self.shotNum)
-                print("all ayc parameters loaded     ", end="\n")
+                print("Done downloading ayc parameters", end="\n")
                 self.times_ayc = self.te.time.data
                 self.client = True
                 Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
                 self.Ip = np.nan_to_num(Ip.data)
                 
                 self.IpTime = Ip.time.data
-                print("All data downloaded from client")
+
                 self.localIpAdj=[]
                 self.IpMax = []
                 self.shotNums = []
@@ -198,6 +209,9 @@ class Shot:
                     self.NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-k))]]
                 for j in range(len(self.times)):
                     self.IpMax += [np.max(self.localIpAdj)]
+                print("All data downloaded from client")
+                print("\n\n")
+
             except:
                 print("Client connection failed.")
     
