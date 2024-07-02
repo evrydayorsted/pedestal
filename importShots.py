@@ -13,7 +13,7 @@ counter = 1
 totalNumShots = len(shots)+len(newShots["Shot Number"])
 for i in shots:
     try:
-        a = Shot(i, "all")
+        a = Shot(i, "both")
         # Adding new shots
         a.fit(savepklforshot=True)
         print("--- %s seconds ---" % (time.time() - start_time))
@@ -26,7 +26,7 @@ for i in shots:
         
 for i in newShots["Shot Number"]:
     try:
-        a = Shot(i, "all")
+        a = Shot(i, "both")
         # Adding new shots
         a.fit(savepklforshot=True)
         print("--- %s seconds ---" % (time.time() - start_time))
