@@ -43,9 +43,7 @@ class Shot:
             #download pkl
             filename = 'outputWithBeamPower/MAST-U_pedestal_'+self.shotNum+'.pkl'
             infile = open(filename, 'rb')
-            print(infile)
             pkldata = pickle.load(infile)
-            print("test")
             infile.close()
             
             #read off values
