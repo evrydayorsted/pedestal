@@ -67,12 +67,7 @@ class Shot:
             self.elong  = pkldata['elong']
             self.delta = pkldata['delta']
             self.pkl = True
-            try:
-                self.Ip = pkldata['Ip']
-            except:
-                print("Plasma Current data failed")
             self.shotByTimeSlice = pkldata['ShotNum']
-            self.IpTime = pkldata['IpTime']
             #interpolated to thomson times
             self.IpAdjusted = np.array(pkldata["IpTimeAdjusted"])
             self.IpMax = np.array(pkldata['IpMax'])
@@ -333,7 +328,6 @@ class Shot:
 
         shot = self.shotNum
                 
-        IpTime = self.IpTime
         # First check if the rprof data from epm is good (at least two points > rmaxis exist). This filters out if rprof is all nans
         
         # Set up times array
@@ -689,7 +683,7 @@ class Shot:
                     'H_ped_psin_te': H_ped_psin_te,'H_ped_psin_ne': H_ped_psin_ne,'H_ped_psin_pe': H_ped_psin_pe,
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
-                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'Ip': self.Ip, 'IpTime': self.IpTime, 'NBI': total_NBI_power, "IpMax":self.IpMax, "IpTimeAdjusted":self.localIpAdj, "ShotNum":self.shotNums}
+                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': total_NBI_power, "IpMax":self.IpMax, "IpTimeAdjusted":self.localIpAdj, "ShotNum":self.shotNums}
             filename = 'outputWithBeamPower/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
