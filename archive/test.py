@@ -1,5 +1,5 @@
 # %%
-from Shot import *
+from pedestal import *
 import time
 import numpy as np
 # %%
