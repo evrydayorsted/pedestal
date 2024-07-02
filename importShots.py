@@ -22,6 +22,8 @@ for i in shots:
     except:
         counter +=1
         print(i, " FAILED --------------------------------------")
+        raise Exception
+        
 for i in newShots["Shot Number"]:
     try:
         a = Shot(i, "all")
