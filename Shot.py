@@ -162,9 +162,10 @@ class Shot:
                 print("All efit parameters loaded       ", end="\n")
                 
                 #in megawatts
-                
-                self.total_NBI_power = client.get('anb/sum/power', shot)
-
+                try:
+                    self.total_NBI_power = client.get('anb/sum/power', shot)
+                except:
+                    print("nbi fail")
                 self.te   = client.get('/ayc/t_e',self.shotNum)
                 print("1/6 ayc parameters loaded", end="\r")
                 self.dte  = client.get('/ayc/dt_e',self.shotNum)
