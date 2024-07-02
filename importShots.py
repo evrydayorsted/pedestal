@@ -40,3 +40,4 @@ for i in newShots["Shot Number"]:
         print(i, " FAILED -------------------------")
 
 print("failedShots", failedShots)
+
