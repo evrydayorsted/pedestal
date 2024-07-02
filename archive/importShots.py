@@ -1,4 +1,4 @@
-from Shot import *
+from pedestal import *
 import time
 import pandas
 start_time = time.time()
