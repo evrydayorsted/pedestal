@@ -1331,6 +1331,7 @@ def importShots(shotNums = allShotNums, failedShotNums = failedShotNums):
     start_time = time.time()
     counter = 1
     totalNumShots = len(shotNums)-len(failedShotNums)
+    failedShots = []
     for i in shotNums:
         if i not in failedShotNums:
             try:
