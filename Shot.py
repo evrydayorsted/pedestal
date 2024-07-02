@@ -76,6 +76,7 @@ class Shot:
             #interpolated to thomson times
             self.IpAdjusted = np.array(pkldata["IpTimeAdjusted"])
             self.IpMax = np.array(pkldata['IpMax'])
+            self.NBI = pkldata["NBI"]
 
             print("Pkl data loaded")
             # except Exception as error:
@@ -165,6 +166,7 @@ class Shot:
                 #in megawatts
                 try:
                     self.total_NBI_power = client.get('anb/sum/power', shot)
+
                 except:
                     print("nbi fail")
                 self.te   = client.get('/ayc/t_e',self.shotNum)
@@ -191,9 +193,11 @@ class Shot:
                 self.localIpAdj=[]
                 self.IpMax = []
                 self.shotNums = []
+                self.NBIAdj=[]
                 for k in self.times:
                     self.localIpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-k))]]
                     self.shotNums += [shotNum]
+                    self.NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-k))]]
                 for j in range(len(self.times)):
                     self.IpMax += [np.max(self.localIpAdj)]
             except:
@@ -311,7 +315,7 @@ class Shot:
         psin_2D   = self.psin_2D
         #psi_2D    = self.psi_2D
         #in megawatts
-        total_NBI_power = self.total_NBI_power.data
+        total_NBI_power = self.NBIAdj
         ultimatemintime = 0.1
         mintime   = numpy.max([numpy.min(times_apf),numpy.min(times_epm),ultimatemintime])
         maxtime   = numpy.min([numpy.max(times_apf),numpy.max(times_epm)])
@@ -685,7 +689,7 @@ class Shot:
                     'H_ped_psin_te': H_ped_psin_te,'H_ped_psin_ne': H_ped_psin_ne,'H_ped_psin_pe': H_ped_psin_pe,
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
-                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'Ip': self.Ip, 'IpTime': self.IpTime, 'NBI': self.total_NBI_power.data, "IpMax":self.IpMax, "IpTimeAdjusted":self.localIpAdj, "ShotNum":self.shotNums}
+                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'Ip': self.Ip, 'IpTime': self.IpTime, 'NBI': total_NBI_power, "IpMax":self.IpMax, "IpTimeAdjusted":self.localIpAdj, "ShotNum":self.shotNums}
             filename = 'outputWithBeamPower/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
