@@ -19,9 +19,10 @@ for i in shots:
         print("--- %s seconds ---" % (time.time() - start_time))
         print(str(totalNumShots-counter)+"left to go")
         counter += 1
-    except:
+    except Exception as error:
         counter +=1
         failedShots += [i]
+        print(error)
         print(i, " FAILED --------------------------------------")
         
 for i in newShots["Shot Number"]:
@@ -32,9 +33,10 @@ for i in newShots["Shot Number"]:
         print("--- %s seconds ---" % (time.time() - start_time))
         print(str(totalNumShots-counter)+"left to go")
         counter += 1
-    except:
+    except Exception as error:
         counter += 1
         failedShots += [i]
+        print(error)
         print(i, " FAILED -------------------------")
 
 print("failedShots", failedShots)
