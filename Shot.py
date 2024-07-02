@@ -162,7 +162,8 @@ class Shot:
                 print("All efit parameters loaded       ", end="\n")
                 
                 #in megawatts
-                #self.total_NBI_power = client.get('anb/sum/power', shot)
+                
+                self.total_NBI_power = client.get('anb/sum/power', shot)
 
                 self.te   = client.get('/ayc/t_e',self.shotNum)
                 print("1/6 ayc parameters loaded", end="\r")
@@ -300,7 +301,7 @@ class Shot:
         psin_2D   = self.psin_2D
         #psi_2D    = self.psi_2D
         #in megawatts
-        #total_NBI_power = self.total_NBI_power
+        total_NBI_power = self.total_NBI_power
         ultimatemintime = 0.1
         mintime   = numpy.max([numpy.min(times_apf),numpy.min(times_epm),ultimatemintime])
         maxtime   = numpy.min([numpy.max(times_apf),numpy.max(times_epm)])
@@ -674,8 +675,8 @@ class Shot:
                     'H_ped_psin_te': H_ped_psin_te,'H_ped_psin_ne': H_ped_psin_ne,'H_ped_psin_pe': H_ped_psin_pe,
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
-                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'Ip': self.Ip, 'IpTime': self.IpTime}
-            filename = 'outputWithPlasmaCurrent/MAST-U_pedestal_'+str(shot)+'.pkl'
+                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'Ip': self.Ip, 'IpTime': self.IpTime, 'NBI': self.total_NBI_power}
+            filename = 'outputWithBeamPower/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
