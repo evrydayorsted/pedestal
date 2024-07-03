@@ -79,7 +79,7 @@ class Shot:
                 self.pkl = True
                 self.shotByTimeSlice = pkldata['ShotNum']
                 #interpolated to thomson times
-                self.IpAdjusted = np.array(pkldata["IpTimeAdjusted"])
+                self.Ip = np.array(pkldata["Ip"])
                 self.IpMax = np.array(pkldata['IpMax'])
                 self.NBI = pkldata["NBI"]
                 self.ssNBI = pkldata["ssNBI"]
@@ -205,13 +205,6 @@ class Shot:
                 
                 self.IpTime = Ip.time.data
 
-                self.localIpAdj=[]
-                self.IpMax = []
-                self.shotNums = []
-                self.NBIAdj=[]
-                self.ssNBIAdj = []
-                self.swNBIAdj = []
-                self.betaNAdj = []
                 
                 print("All data downloaded from client")
                 print("\n\n")
@@ -392,17 +385,25 @@ class Shot:
         W_ped_radius_pe  = numpy.zeros(len(times))
         H_ped_radius_pe  = numpy.zeros(len(times))
 
+
+        IpAdj=[]
+        IpMax = np.ones(len(times))
+        shotNums = []
+        NBIAdj=[]
+        ssNBIAdj = []
+        swNBIAdj = []
+        betaNAdj = []
+
         # For each time slice
         for i in range(0,len(times)):
             time = times[i]
 
-            self.localIpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-time))]]
-            self.shotNums += [int(self.shotNum)]
-            self.NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-time))]]
-            self.ssNBIAdj += [self.ss_NBI_power.data[np.argmin(np.abs(self.ss_NBI_power.time.data-time))]]
-            self.swNBIAdj += [self.sw_NBI_power.data[np.argmin(np.abs(self.sw_NBI_power.time.data-time))]]
-            self.betaNAdj += [self.betaN.data[np.argmin(np.abs(self.betaN.time.data-time))]]
-            self.IpMax += [np.max(self.localIpAdj)]
+            IpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-time))]]
+            shotNums += [int(self.shotNum)]
+            NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-time))]]
+            ssNBIAdj += [self.ss_NBI_power.data[np.argmin(np.abs(self.ss_NBI_power.time.data-time))]]
+            swNBIAdj += [self.sw_NBI_power.data[np.argmin(np.abs(self.sw_NBI_power.time.data-time))]]
+            betaNAdj += [self.betaN.data[np.argmin(np.abs(self.betaN.time.data-time))]]
             
             time_index_apf = numpy.argmin(abs(times_apf-time))
             if plotVsRadius or plotVsPsiN:
@@ -673,6 +674,7 @@ class Shot:
                 if showFigure:
                     plt.show()
 
+        IpMax *= np.max(IpAdj)
                 
         if plotVsTime:
 
@@ -713,7 +715,7 @@ class Shot:
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
                     'Aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': self.NBIAdj, 'ssNBI':self.ssNBIAdj, "swNBI":self.swNBIAdj,
-                    "IpMax":self.IpMax, "IpTimeAdjusted":self.localIpAdj, "ShotNum":self.shotNums, "betaN":self.betaNAdj}
+                    "IpMax":self.IpMax, "Ip":self.IpAdj, "ShotNum":self.shotNums, "betaN":self.betaNAdj}
             filename = 'outputWithBeamPower3/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
@@ -819,7 +821,7 @@ class Shot:
                                                 (xquantity< xx[i+1]) &
                                                 (yquantity>=yy[j])   &
                                                 (yquantity< yy[j+1]) &
-                                                (self.IpAdjusted>IpMin*self.IpMax) &
+                                                (self.Ip>IpMin*self.IpMax) &
                                                 (self.Beta_ped/self.W_ped >0.75) &
                                                 (self.H_ped_psin_ne>0) &
                                                 (self.H_ped_psin_pe>0))
@@ -828,21 +830,21 @@ class Shot:
                                                 (xquantity< xx[i+1]) &
                                                 (yquantity>=yy[j])   &
                                                 (yquantity< yy[j+1]) &
-                                                (self.IpAdjusted>IpMin*self.IpMax) &
+                                                (self.Ip>IpMin*self.IpMax) &
                                                 (self.Beta_ped/self.W_ped >0.75))
                     elif posPed:
                         index, = np.where((xquantity>=xx[i])   & 
                                                 (xquantity< xx[i+1]) &
                                                 (yquantity>=yy[j])   &
                                                 (yquantity< yy[j+1]) &  
-                                                (self.IpAdjusted>IpMin*self.IpMax) &
+                                                (self.Ip>IpMin*self.IpMax) &
                                                 (self.H_ped_psin_ne>0) &
                                                 (self.H_ped_psin_pe>0))
                     else:
                         index, = np.where((xquantity>=xx[i])   & 
                                                 (xquantity< xx[i+1]) &
                                                 (yquantity>=yy[j])   &
-                                                (self.IpAdjusted>IpMin*self.IpMax) &
+                                                (self.Ip>IpMin*self.IpMax) &
                                                 (yquantity< yy[j+1]))  
                     if len(index) >= numMin:
                         totalPoints += len(index)
