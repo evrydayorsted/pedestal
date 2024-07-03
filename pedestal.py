@@ -1412,6 +1412,7 @@ def importShots(shotNums = allShotNums, failedShotNums = failedShotNums):
                 a.fit(savePklForShot=True)
                 print("--- %s seconds ---" % (time.time() - start_time))
                 print(str(totalNumShots-counter)+"left to go")
+                print("\n")
             except Exception as error:
                 failedShots += [i]
                 print(error)
