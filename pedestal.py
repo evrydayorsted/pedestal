@@ -714,8 +714,8 @@ class Shot:
                     'H_ped_psin_te': H_ped_psin_te,'H_ped_psin_ne': H_ped_psin_ne,'H_ped_psin_pe': H_ped_psin_pe,
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
-                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': self.NBIAdj, 'ssNBI':self.ssNBIAdj, "swNBI":self.swNBIAdj,
-                    "IpMax":self.IpMax, "Ip":self.IpAdj, "ShotNum":self.shotNums, "betaN":self.betaNAdj}
+                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': NBIAdj, 'ssNBI':ssNBIAdj, "swNBI":swNBIAdj,
+                    "IpMax":IpMax, "Ip":IpAdj, "ShotNum":shotNums, "betaN":betaNAdj}
             filename = 'outputWithBeamPower3/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
