@@ -213,7 +213,8 @@ class Shot:
                 print("All data downloaded from client")
                 print("\n\n")
 
-            except:
+            except Exception as error:
+                print(error)
                 print("Client connection failed.")
     
         # Run the appropriate data pulls
