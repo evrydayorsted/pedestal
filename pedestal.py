@@ -204,6 +204,7 @@ class Shot:
                 self.shotNums = []
                 self.NBIAdj=[]
                 for k in self.times:
+                    print("try")
                     self.localIpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-k))]]
                     self.shotNums += [shotNum]
                     self.NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-k))]]
