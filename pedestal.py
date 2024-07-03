@@ -1,5 +1,4 @@
 print("Importing libraries...")
-print("\n\n")
 
 import matplotlib
 import matplotlib.cm
@@ -26,12 +25,11 @@ try:
 except:
     print("pyuda connection failed")
 
-print("\n\n")
 print("Libraries imported.")
-print("\n\n")
+print("\n")
 
 class Shot:
-    def __init__(self, shotNum, datatype):
+    def __init__(self, shotNum, datatype, folder="outputWithBeamPower3"):
         """Initializes shot object
 
         Args:
@@ -47,18 +45,27 @@ class Shot:
 
         # Define functions to pull data
         def pklDownload(self):
-            """Pulls data from pkl file 'output/MAST_U_pedestal_{#}.pkl' or 'output/MAST_U_pedestal_allShots.pkl'"""
+            """Pulls data from pkl file 'folder/MAST_U_pedestal_{#}.pkl' or 'folder/MAST_U_pedestal_allShots.pkl'"""
             print("Downloading pkl data...")
             try:
                 #download pkl
-                filename = 'outputWithBeamPower3/MAST-U_pedestal_'+self.shotNum+'.pkl'
+                filename = folder +'/MAST-U_pedestal_'+self.shotNum+'.pkl'
                 infile = open(filename, 'rb')
                 pkldata = pickle.load(infile)
                 infile.close()
-                
                 #read off values
-                self.shot = pkldata['shot']
-                self.times = pkldata['times']
+                try:
+                    self.shot = pkldata['shot']
+                    self.times = pkldata['times']
+                    self.aratio = pkldata['aratio']
+                    self.shotIndexed = pkldata['shotIndexed']
+                except:
+                    #deprecated variable names
+                    self.shot = pkldata['Shot']
+                    self.times = pkldata['Times']
+                    self.aratio = pkldata['Aratio']
+                    self.shotIndexed = pkldata['ShotNum']
+
                 self.W_ped = pkldata['W_ped']
                 self.Beta_ped = pkldata['Beta_ped']
                 self.W_ped_psin_te = pkldata['W_ped_psin_te']
@@ -73,25 +80,25 @@ class Shot:
                 self.H_ped_radius_te = pkldata['H_ped_radius_te']
                 self.H_ped_radius_ne = pkldata['H_ped_radius_ne']
                 self.H_ped_radius_pe = pkldata['H_ped_radius_pe']
-                self.aratio = pkldata['aratio']
                 self.elong  = pkldata['elong']
                 self.delta = pkldata['delta']
-                self.shotIndexed = pkldata['shotIndexed']
                 self.Ip = np.array(pkldata["Ip"])
                 self.IpMax = np.array(pkldata['IpMax'])
-                self.NBI = pkldata["NBI"]
-                self.ssNBI = pkldata["ssNBI"]
-                self.swNBI = pkldata["swNBI"]
-                self.betaN = pkldata["betaN"]
-
+                try:
+                    self.NBI = pkldata["NBI"]
+                    self.ssNBI = pkldata["ssNBI"]
+                    self.swNBI = pkldata["swNBI"]
+                    self.betaN = pkldata["betaN"]
+                except:
+                    print("No NBI data found")
                 self.pkl = True
                 print("Pkl data loaded")
-                print("\n\n")
+                print("\n")
 
             except Exception as error:
                 print(error)
                 print("Pkl data procurement failed")
-                print("\n\n")
+                print("\n")
 
         def clientDownload(self):
             '''Function to pull data from client. Should only be used for a single shot.'''
@@ -202,7 +209,7 @@ class Shot:
 
                 self.client = True
                 print("All data downloaded from client")
-                print("\n\n")
+                print("\n")
 
             except Exception as error:
                 print(error)
@@ -243,7 +250,7 @@ class Shot:
         if not self.client:
             raise Exception("Must have client data to run fit")
         
-        
+
         te_ped_location = self.te_ped_location
         te_ped_height   = self.te_ped_height
         te_ped_width    = self.te_ped_width
