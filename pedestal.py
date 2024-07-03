@@ -1344,28 +1344,8 @@ allShotNums = [47885, 47886, 47888, 47889, 47890, 47891, 47893, 47894, 47918, 47
 # 47956,47982, 48071, 48156, 48291, 49063 , 49069 failed Ip
 # 48137, 47885 49247, 49259, 49351, 49352, 49353, 49379, 49413, 49456failed nbi 
 failedShotNums = [47956, 47982, 48071, 48156, 48291, 49063, 49069, 48137, 48156, 48071, 47885, 49247, 49259, 49351, 49352, 49353, 49379, 49413, 49456]
-def importShots(shotNums = allShotNums, failedShotNums = failedShotNums):
-    start_time = time.time()
-    counter = 1
-    totalNumShots = len(shotNums)-len(failedShotNums)
-    failedShots = []
-    for i in shotNums:
-        if i not in failedShotNums:
-            try:
-                a = Shot(i, "both")
-                # Adding new shots
-                a.fit(savePklForShot=True)
-                print("--- %s seconds ---" % (time.time() - start_time))
-                print(str(totalNumShots-counter)+"left to go")
-            except Exception as error:
-                failedShots += [i]
-                print(error)
-                print(i, " FAILED --------------------------------------")
-        counter += 1
-    print("failedShots = ", failedShots)
-    failedShotNums += failedShots
 
-def pickleCombine(shotNums = allShotNums, failedShotNums = failedShotNums, folder = "outputWithBeamPower", outfileName = "MAST-U_pedestal_allShots"):
+def pickleCombine(shotNums = allShotNums, failedShotNums = failedShotNums, folder = "outputWithBeamPower3", outfileName = "MAST-U_pedestal_allShots"):
     """
     Combine pickle files
 
@@ -1408,6 +1388,30 @@ def pickleCombine(shotNums = allShotNums, failedShotNums = failedShotNums, folde
     pickle.dump(pkldata,outfile)
 
     outfile.close()
+
+def importShots(shotNums = allShotNums, failedShotNums = failedShotNums):
+    start_time = time.time()
+    counter = 1
+    totalNumShots = len(shotNums)-len(failedShotNums)
+    failedShots = []
+    for i in shotNums:
+        if i not in failedShotNums:
+            try:
+                a = Shot(i, "both")
+                # Adding new shots
+                a.fit(savePklForShot=True)
+                print("--- %s seconds ---" % (time.time() - start_time))
+                print(str(totalNumShots-counter)+"left to go")
+            except Exception as error:
+                failedShots += [i]
+                print(error)
+                print(i, " FAILED --------------------------------------")
+        counter += 1
+    print("failedShots = ", failedShots)
+    failedShotNums += failedShots
+    pickleCombine()
+
+
 
 
 
