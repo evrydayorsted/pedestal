@@ -51,7 +51,7 @@ class Shot:
             print("Downloading pkl data...")
             try:
                 #download pkl
-                filename = 'outputWithBeamPower/MAST-U_pedestal_'+self.shotNum+'.pkl'
+                filename = 'outputWithPlasmaCurrent/MAST-U_pedestal_'+self.shotNum+'.pkl'
                 infile = open(filename, 'rb')
                 pkldata = pickle.load(infile)
                 infile.close()
@@ -175,6 +175,9 @@ class Shot:
                 #in megawatts
                 try:
                     self.total_NBI_power = client.get('anb/sum/power', shot)
+                    #NBI(SS/SW)
+                    ('xnb/ss/beampower')
+                    ('xnb/sw/beampower')
 
                 except:
                     print("nbi fail")
@@ -203,7 +206,7 @@ class Shot:
                 self.IpMax = []
                 self.shotNums = []
                 self.NBIAdj=[]
-                for k in self.times:
+                for k in self.times_ayc:
                     print("try")
                     self.localIpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-k))]]
                     self.shotNums += [shotNum]
@@ -703,7 +706,7 @@ class Shot:
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
                     'Aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': total_NBI_power, "IpMax":self.IpMax, "IpTimeAdjusted":self.localIpAdj, "ShotNum":self.shotNums}
-            filename = 'outputWithBeamPower/MAST-U_pedestal_'+str(shot)+'.pkl'
+            filename = 'outputWithBeamPower3/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
