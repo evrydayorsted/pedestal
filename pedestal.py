@@ -51,7 +51,7 @@ class Shot:
             print("Downloading pkl data...")
             try:
                 #download pkl
-                filename = 'outputWithPlasmaCurrent3/MAST-U_pedestal_'+self.shotNum+'.pkl'
+                filename = 'outputWithBeamPower3/MAST-U_pedestal_'+self.shotNum+'.pkl'
                 infile = open(filename, 'rb')
                 pkldata = pickle.load(infile)
                 infile.close()
