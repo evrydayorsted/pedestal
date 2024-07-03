@@ -82,6 +82,9 @@ class Shot:
                 self.IpAdjusted = np.array(pkldata["IpTimeAdjusted"])
                 self.IpMax = np.array(pkldata['IpMax'])
                 self.NBI = pkldata["NBI"]
+                self.ssNBI = pkldata["ssNBI"]
+                self.swNBI = pkldata["swNBI"]
+                self.betaN = pkldata["betaN"]
 
                 print("Pkl data loaded")
                 print("\n\n")
@@ -176,8 +179,8 @@ class Shot:
                 try:
                     self.total_NBI_power = client.get('anb/sum/power', shot)
                     #NBI(SS/SW)
-                    ('xnb/ss/beampower')
-                    ('xnb/sw/beampower')
+                    self.ss_NBI_power = client.get('xnb/ss/beampower', shot)
+                    self.sw_NBI_power = client.get('xnb/ss/beampower', shot)
 
                 except:
                     print("nbi fail")
@@ -206,7 +209,9 @@ class Shot:
                 self.IpMax = []
                 self.shotNums = []
                 self.NBIAdj=[]
-                
+                self.ssNBIAdj = []
+                self.swNBIAdj = []
+                self.betaNAdj = []
                 
                 print("All data downloaded from client")
                 print("\n\n")
@@ -327,7 +332,7 @@ class Shot:
         psin_2D   = self.psin_2D
         #psi_2D    = self.psi_2D
         #in megawatts
-        total_NBI_power = self.NBIAdj
+
         ultimatemintime = 0.1
         mintime   = numpy.max([numpy.min(times_apf),numpy.min(times_epm),ultimatemintime])
         maxtime   = numpy.min([numpy.max(times_apf),numpy.max(times_epm)])
@@ -394,6 +399,9 @@ class Shot:
             self.localIpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-time))]]
             self.shotNums += [int(self.shotNum)]
             self.NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-time))]]
+            self.ssNBIAdj += [self.ss_NBI_power.data[np.argmin(np.abs(self.ss_NBI_power.time.data-time))]]
+            self.swNBIAdj += [self.sw_NBI_power.data[np.argmin(np.abs(self.sw_NBI_power.time.data-time))]]
+            self.betaNAdj += [self.betaN.data[np.argmin(np.abs(self.betaN.time.data-time))]]
             self.IpMax += [np.max(self.localIpAdj)]
             
             time_index_apf = numpy.argmin(abs(times_apf-time))
@@ -704,7 +712,8 @@ class Shot:
                     'H_ped_psin_te': H_ped_psin_te,'H_ped_psin_ne': H_ped_psin_ne,'H_ped_psin_pe': H_ped_psin_pe,
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
-                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': total_NBI_power, "IpMax":self.IpMax, "IpTimeAdjusted":self.localIpAdj, "ShotNum":self.shotNums}
+                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': self.NBIAdj, 'ssNBI':self.ssNBIAdj, "swNBI":self.swNBIAdj,
+                    "IpMax":self.IpMax, "IpTimeAdjusted":self.localIpAdj, "ShotNum":self.shotNums, "betaN":self.betaNAdj}
             filename = 'outputWithBeamPower3/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
@@ -1397,7 +1406,7 @@ def importShots(shotNums = allShotNums, failedShotNums = failedShotNums):
     for i in shotNums:
         if i not in failedShotNums:
             try:
-                a = Shot(i, "both")
+                a = Shot(i, "client")
                 # Adding new shots
                 a.fit(savePklForShot=True)
                 print("--- %s seconds ---" % (time.time() - start_time))
