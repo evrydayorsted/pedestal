@@ -211,7 +211,7 @@ class Shot:
                     self.localIpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-k))]]
                     self.shotNums += [shotNum]
                     self.NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-k))]]
-                for j in range(len(self.times)):
+                for j in range(len(self.times_ayc)):
                     self.IpMax += [np.max(self.localIpAdj)]
                 print("All data downloaded from client")
                 print("\n\n")
