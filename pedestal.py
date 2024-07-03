@@ -57,8 +57,8 @@ class Shot:
                 infile.close()
                 
                 #read off values
-                self.shot = pkldata['Shot']
-                self.times = pkldata['Times']
+                self.shot = pkldata['shot']
+                self.times = pkldata['times']
                 self.W_ped = pkldata['W_ped']
                 self.Beta_ped = pkldata['Beta_ped']
                 self.W_ped_psin_te = pkldata['W_ped_psin_te']
@@ -73,18 +73,18 @@ class Shot:
                 self.H_ped_radius_te = pkldata['H_ped_radius_te']
                 self.H_ped_radius_ne = pkldata['H_ped_radius_ne']
                 self.H_ped_radius_pe = pkldata['H_ped_radius_pe']
-                self.Aratio = pkldata['Aratio']
+                self.aratio = pkldata['aratio']
                 self.elong  = pkldata['elong']
                 self.delta = pkldata['delta']
-                self.pkl = True
-                self.shotByTimeSlice = pkldata['ShotNum']
-                #interpolated to thomson times
+                self.shotIndexed = pkldata['shotIndexed']
                 self.Ip = np.array(pkldata["Ip"])
                 self.IpMax = np.array(pkldata['IpMax'])
                 self.NBI = pkldata["NBI"]
                 self.ssNBI = pkldata["ssNBI"]
                 self.swNBI = pkldata["swNBI"]
                 self.betaN = pkldata["betaN"]
+
+                self.pkl = True
 
                 print("Pkl data loaded")
                 print("\n\n")
@@ -181,9 +181,11 @@ class Shot:
                     #NBI(SS/SW)
                     self.ss_NBI_power = client.get('xnb/ss/beampower', shot)
                     self.sw_NBI_power = client.get('xnb/sw/beampower', shot)
+                    print("Done downloading NBI power", end="\n")
 
                 except:
                     print("nbi fail")
+
                 self.te   = client.get('/ayc/t_e',self.shotNum)
                 print("1/6 ayc parameters loaded", end="\r")
                 self.dte  = client.get('/ayc/dt_e',self.shotNum)
@@ -388,7 +390,7 @@ class Shot:
 
         IpAdj=[]
         IpMax = np.ones(len(times))
-        shotNums = []
+        shotIndexed = []
         NBIAdj=[]
         ssNBIAdj = []
         swNBIAdj = []
@@ -399,7 +401,7 @@ class Shot:
             time = times[i]
 
             IpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-time))]]
-            shotNums += [int(self.shotNum)]
+            shotIndexed += [int(self.shotNum)]
             NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-time))]]
             ssNBIAdj += [self.ss_NBI_power.data[np.argmin(np.abs(self.ss_NBI_power.time.data-time))]]
             swNBIAdj += [self.sw_NBI_power.data[np.argmin(np.abs(self.sw_NBI_power.time.data-time))]]
@@ -709,13 +711,13 @@ class Shot:
         
         if savePklForShot:
 
-            pkldata = {'Shot': shot, 'Times': times, 'W_ped': W_ped, 'Beta_ped': beta_ped,
+            pkldata = {'shot': shot, 'times': times, 'W_ped': W_ped, 'Beta_ped': beta_ped,
                     'W_ped_psin_te': W_ped_psin_te,'W_ped_psin_ne': W_ped_psin_ne,'W_ped_psin_pe': W_ped_psin_pe,
                     'H_ped_psin_te': H_ped_psin_te,'H_ped_psin_ne': H_ped_psin_ne,'H_ped_psin_pe': H_ped_psin_pe,
                     'W_ped_radius_te': W_ped_radius_te,'W_ped_radius_ne': W_ped_radius_ne,'W_ped_radius_pe': W_ped_radius_pe,
                     'H_ped_radius_te': H_ped_radius_te,'H_ped_radius_ne': H_ped_radius_ne,'H_ped_radius_pe': H_ped_radius_pe,
-                    'Aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': NBIAdj, 'ssNBI':ssNBIAdj, "swNBI":swNBIAdj,
-                    "IpMax":IpMax, "Ip":IpAdj, "ShotNum":shotNums, "betaN":betaNAdj}
+                    'aratio': Aratio, 'elong': elong, 'delta': delta, 'NBI': NBIAdj, 'ssNBI':ssNBIAdj, "swNBI":swNBIAdj,
+                    "IpMax":IpMax, "Ip":IpAdj, "shotIndexed":shotIndexed, "betaN":betaNAdj}
             filename = 'outputWithBeamPower3/MAST-U_pedestal_'+str(shot)+'.pkl'
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
@@ -861,7 +863,7 @@ class Shot:
                         elif countType == "time":
                             Ntot[i,j] = np.mean(self.times[index])
                         elif countType == "aratio":
-                            Ntot[i,j] = np.mean(self.Aratio[index])
+                            Ntot[i,j] = np.mean(self.aratio[index])
                         elif countType == "pedestalHeight":
                             Ntot[i,j] = np.mean(self.Beta_ped[index])
                         elif countType == "pedestalSlope":
@@ -1191,7 +1193,7 @@ class Shot:
 
             outfilename = "aratiovsdelta"
 
-            xquantity    = self.Aratio
+            xquantity    = self.aratio
             xlabel       = r'Aspect ratio'
             x1           = 1
             x2           = 3
