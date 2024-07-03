@@ -180,7 +180,7 @@ class Shot:
                     self.total_NBI_power = client.get('anb/sum/power', shot)
                     #NBI(SS/SW)
                     self.ss_NBI_power = client.get('xnb/ss/beampower', shot)
-                    self.sw_NBI_power = client.get('xnb/ss/beampower', shot)
+                    self.sw_NBI_power = client.get('xnb/sw/beampower', shot)
 
                 except:
                     print("nbi fail")
