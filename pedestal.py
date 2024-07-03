@@ -51,7 +51,7 @@ class Shot:
             print("Downloading pkl data...")
             try:
                 #download pkl
-                filename = 'outputWithPlasmaCurrent/MAST-U_pedestal_'+self.shotNum+'.pkl'
+                filename = 'outputWithPlasmaCurrent3/MAST-U_pedestal_'+self.shotNum+'.pkl'
                 infile = open(filename, 'rb')
                 pkldata = pickle.load(infile)
                 infile.close()
@@ -207,7 +207,6 @@ class Shot:
                 self.shotNums = []
                 self.NBIAdj=[]
                 for k in self.times_ayc:
-                    print("try")
                     self.localIpAdj += [self.Ip[np.argmin(np.abs(self.IpTime-k))]]
                     self.shotNums += [shotNum]
                     self.NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-k))]]
