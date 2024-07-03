@@ -718,6 +718,7 @@ class Shot:
             outfile = open(filename, 'wb')
             pickle.dump(pkldata,outfile)
             outfile.close()
+            print('outputWithBeamPower3/MAST-U_pedestal_'+str(shot)+'.pkl saved')
 
 
 
