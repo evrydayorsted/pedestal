@@ -85,7 +85,6 @@ class Shot:
                 self.betaN = pkldata["betaN"]
 
                 self.pkl = True
-
                 print("Pkl data loaded")
                 print("\n\n")
 
@@ -98,14 +97,12 @@ class Shot:
             '''Function to pull data from client. Should only be used for a single shot.'''
             print("Getting data from client for " +self.shotNum+" ...")
             try:
+                #define parameters for pulling from uda
                 client = pyuda.Client()
-
-                # Defining shot based off of class instance
                 shot = self.shotNum
 
                 # Pull fit data from client
                 group = "/apf/core/mtanh/lfs/"
-
                 self.te_ped_location = client.get(group + "t_e/pedestal_location", shot)
                 self.te_ped_height   = client.get(group + "t_e/pedestal_height", shot)
                 self.te_ped_width    = client.get(group + "t_e/pedestal_width", shot)
@@ -125,13 +122,10 @@ class Shot:
                 self.pe_ped_width    = client.get(group + "p_e/pedestal_width", shot)
                 self.pe_ped_top_grad = client.get(group + "p_e/pedestal_top_gradient", shot)
                 self.pe_background   = client.get(group + "p_e/background_level", shot)
+
                 print("Done downloading pedestal parameters")
 
-
                 # EPM: EFIT++
-
-                #neutral beam, Ip, toroidal magnetic field, stored energy, beta_N
-
                 self.Ip        = client.get('epm/output/globalParameters/plasmacurrent',shot)
                 self.times_epm = self.Ip.time.data
                 #toroidal magnetic field (at axis)
@@ -172,20 +166,23 @@ class Shot:
                 self.psin_2D   = client.get('epm/output/profiles2D/psinorm',shot)
                 print("20/20 efit parameters loaded", end="\r")
 
+                Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
+                self.Ip = np.nan_to_num(Ip.data)
+                
+                self.IpTime = Ip.time.data
                 #self.psi_2D    = client.get('epm/output/profiles2D/poloidalflux',shot)
                 print("Done downloading efit parameters", end="\n")
                 
-                #in megawatts
                 try:
+                    #in megawatts
                     self.total_NBI_power = client.get('anb/sum/power', shot)
-                    #NBI(SS/SW)
                     self.ss_NBI_power = client.get('xnb/ss/beampower', shot)
                     self.sw_NBI_power = client.get('xnb/sw/beampower', shot)
                     print("Done downloading NBI power", end="\n")
-
                 except:
                     print("nbi fail")
 
+                # thomson data
                 self.te   = client.get('/ayc/t_e',self.shotNum)
                 print("1/6 ayc parameters loaded", end="\r")
                 self.dte  = client.get('/ayc/dt_e',self.shotNum)
@@ -201,13 +198,9 @@ class Shot:
                 self.rprof     = client.get('epm/output/radialprofiles/R',self.shotNum)
                 print("Done downloading ayc parameters", end="\n")
                 self.times_ayc = self.te.time.data
-                self.client = True
-                Ip = client.get('epm/output/globalParameters/plasmacurrent',self.shotNum)
-                self.Ip = np.nan_to_num(Ip.data)
-                
-                self.IpTime = Ip.time.data
 
-                
+
+                self.client = True
                 print("All data downloaded from client")
                 print("\n\n")
 
@@ -249,6 +242,8 @@ class Shot:
         Adapted from pedestal_fit_parameters Jack Berkery 2023"""
         if not self.client:
             raise Exception("Must have client data to run fit")
+        
+        
         te_ped_location = self.te_ped_location
         te_ped_height   = self.te_ped_height
         te_ped_width    = self.te_ped_width
@@ -262,7 +257,6 @@ class Shot:
         ne_ped_width    = self.ne_ped_width
         ne_ped_top_grad = self.ne_ped_top_grad
         ne_background   = self.ne_background
-
         pe_ped_location = self.pe_ped_location
         pe_ped_height   = self.pe_ped_height
         pe_ped_width    = self.pe_ped_width
