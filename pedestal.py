@@ -89,6 +89,7 @@ class Shot:
                     self.ssNBI = pkldata["ssNBI"]
                     self.swNBI = pkldata["swNBI"]
                     self.betaN = pkldata["betaN"]
+
                 except:
                     print("No NBI data found")
                 self.pkl = True
@@ -418,15 +419,15 @@ class Shot:
             if self.total_NBI_power != None:
                 NBIAdj += [self.total_NBI_power.data[np.argmin(np.abs(self.total_NBI_power.time.data-time))]]
             else:
-                NBIAdj += [None]
+                NBIAdj += [0]
             if self.ss_NBI_power != None:
                 ssNBIAdj += [self.ss_NBI_power.data[np.argmin(np.abs(self.ss_NBI_power.time.data-time))]]
             else:
-                ssNBIAdj += [None]
+                ssNBIAdj += [0]
             if self.sw_NBI_power != None:
                 swNBIAdj += [self.sw_NBI_power.data[np.argmin(np.abs(self.sw_NBI_power.time.data-time))]]
             else:
-                swNBIAdj += [None]
+                swNBIAdj += [0]
 
             betaNAdj += [self.betaN.data[np.argmin(np.abs(self.betaN.time.data-time))]]
             
@@ -750,7 +751,7 @@ class Shot:
 
 
     def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 60,
-                    cbarMax =2, cbarMin=0, numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = True, posPed = True):
+                    cbarMax =2, cbarMin=0, numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = 0.75):
         """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
         Args:
@@ -840,37 +841,14 @@ class Shot:
             for i in range(0,len(xx)-1):
                 for j in range(0,len(yy)-1):
                     #Can add additional conditions here to filter what is shown in contour
-                    if lowSlopeFilter:
-                        if posPed:
-                            index, = np.where((xquantity>=xx[i])   & 
-                                                (xquantity< xx[i+1]) &
-                                                (yquantity>=yy[j])   &
-                                                (yquantity< yy[j+1]) &
-                                                (self.Ip>IpMin*self.IpMax) &
-                                                (self.Beta_ped/self.W_ped >0.75) &
-                                                (self.H_ped_psin_ne>0) &
-                                                (self.H_ped_psin_pe>0))
-                        else:
-                            index, = np.where((xquantity>=xx[i])   & 
-                                                (xquantity< xx[i+1]) &
-                                                (yquantity>=yy[j])   &
-                                                (yquantity< yy[j+1]) &
-                                                (self.Ip>IpMin*self.IpMax) &
-                                                (self.Beta_ped/self.W_ped >0.75))
-                    elif posPed:
-                        index, = np.where((xquantity>=xx[i])   & 
-                                                (xquantity< xx[i+1]) &
-                                                (yquantity>=yy[j])   &
-                                                (yquantity< yy[j+1]) &  
-                                                (self.Ip>IpMin*self.IpMax) &
-                                                (self.H_ped_psin_ne>0) &
-                                                (self.H_ped_psin_pe>0))
-                    else:
-                        index, = np.where((xquantity>=xx[i])   & 
-                                                (xquantity< xx[i+1]) &
-                                                (yquantity>=yy[j])   &
-                                                (self.Ip>IpMin*self.IpMax) &
-                                                (yquantity< yy[j+1]))  
+                    index, = np.where((xquantity>=xx[i])   & 
+                                        (xquantity< xx[i+1]) &
+                                        (yquantity>=yy[j])   &
+                                        (yquantity< yy[j+1]) &
+                                        (self.Ip>IpMin*self.IpMax) &
+                                        (self.Beta_ped/self.W_ped >lowSlopeFilter) &
+                                        (self.NBI>2.25))
+
                     if len(index) >= numMin:
                         totalPoints += len(index)
 
