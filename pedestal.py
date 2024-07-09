@@ -29,7 +29,7 @@ print("Libraries imported.")
 print("\n")
 
 class Shot:
-    def __init__(self, shotNum, datatype, folder="outputWithBeamPower3"):
+    def __init__(self, shotNum, datatype, folder="outputWithBeamPower4"):
         """Initializes shot object
 
         Args:
@@ -46,7 +46,7 @@ class Shot:
         # Define functions to pull data
         def pklDownload(self):
             """Pulls data from pkl file 'folder/MAST_U_pedestal_{#}.pkl' or 'folder/MAST_U_pedestal_allShots.pkl'"""
-            print("Downloading pkl data...")
+            print("Downloading pkl data...", self.shotNum)
             try:
                 #download pkl
                 filename = folder +'/MAST-U_pedestal_'+self.shotNum+'.pkl'
