@@ -40,6 +40,7 @@ class ELM_signal(object):
         plt.grid()
         if show==True:
             plt.show()
+            plt.savefig("plots/plot_smoothed_signal.png")
     def normalise_signal(self):
         start_index=np.argmin(np.abs(ELM_signal.raw_time-ELM_signal.smooth_time[0]))
         ELM_signal_cut=ELM_signal.raw_signal[start_index:start_index+len(ELM_signal.smooth_time)]
@@ -71,6 +72,7 @@ class ELM_signal(object):
             print("Have not found ELM times yet. Run ELM_signal.find_ELM_times_norm()")
         if show==True:
             plt.show()
+            plt.savefig("plots/plot_normalised_signal.png")
     def plot_ac_signal(self,scale_raw=0.5,show=True):
         plt.figure()
         plt.plot(ELM_signal.smooth_time,ELM_signal.ac_signal,label='Mean subtracted')
@@ -85,6 +87,7 @@ class ELM_signal(object):
             print("Have not found ELM times yet. Run ELM_signal.find_ELM_times_ac()")
         if show==True:
             plt.show()
+            plt.savefig("plots/plot_ac_signal.png")
 if __name__ == '__main__':
     shot=46631
     print("running")
