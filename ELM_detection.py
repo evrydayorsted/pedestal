@@ -102,9 +102,12 @@ if __name__ == '__main__':
     ELM_signal.find_ELM_times_ac(ac_thres=0.02,min_time_peaks=0.5e-3)
     ELM_signal.plot_ac_signal()
     print(ELM_signal.ELM_ac_times) #time of ELMs
+    print(len(ELM_signal.ELM_ac_times))
+    print("--- %s seconds ---" % (time.time() - start_time))
     #Method 2: normalise signal and then search for peaks (signal-mean)/std
     ELM_signal.find_ELM_times_norm(norm_thres=2.3,min_time_peaks=0.5e-3)
     ELM_signal.plot_normalised_signal()
     print(ELM_signal.ELM_norm_times) #time of ELMs
+    print(len(ELM_signal. ELM_norm_times))
     print("--- %s seconds ---" % (time.time() - start_time))
     print("done")
