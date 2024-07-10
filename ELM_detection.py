@@ -87,7 +87,9 @@ class ELM_signal(object):
             plt.show()
 if __name__ == '__main__':
     shot=46631
+    print("running")
     dalpha=client.get('/xim/da/hm10/t',shot)
+    print("got client data")
     ELM_signal=ELM_signal(dalpha.data,dalpha.time.data)
     ELM_signal.plot_smoothed_signal()
     ELM_signal.normalise_signal()
@@ -99,3 +101,4 @@ if __name__ == '__main__':
     ELM_signal.find_ELM_times_norm(norm_thres=2.3,min_time_peaks=0.5e-3)
     ELM_signal.plot_normalised_signal()
     ELM_signal.ELM_norm_times #time of ELMs
+    print("done")
