@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import matplotlib.pyplot as plt
 import pyuda
@@ -90,6 +91,7 @@ class ELM_signal(object):
             plt.savefig("plots/plot_ac_signal.png")
 if __name__ == '__main__':
     shot=46631
+    start_time = time.time()
     print("running")
     dalpha=client.get('/xim/da/hm10/t',shot)
     print("got client data")
@@ -104,4 +106,5 @@ if __name__ == '__main__':
     ELM_signal.find_ELM_times_norm(norm_thres=2.3,min_time_peaks=0.5e-3)
     ELM_signal.plot_normalised_signal()
     print(ELM_signal.ELM_norm_times) #time of ELMs
+    print("--- %s seconds ---" % (time.time() - start_time))
     print("done")
