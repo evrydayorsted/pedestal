@@ -95,9 +95,13 @@ if __name__ == '__main__':
     print("running")
     dalpha=client.get('/xim/da/hm10/t',shot)
     print("got client data")
+    print("--- %s seconds ---" % (time.time() - start_time))
+
     ELM_signal=ELM_signal(dalpha.data,dalpha.time.data)
     ELM_signal.plot_smoothed_signal()
     ELM_signal.normalise_signal()
+    print("--- %s seconds ---" % (time.time() - start_time))
+
     #Method 1: subtract running mean from signal and search for peaks
     ELM_signal.find_ELM_times_ac(ac_thres=0.02,min_time_peaks=0.5e-3)
     ELM_signal.plot_ac_signal()
