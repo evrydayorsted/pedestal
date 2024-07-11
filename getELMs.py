@@ -11,15 +11,15 @@ for i in allShotNums:
         shot=i
         start_time = time.time()
         dalpha=client.get('/xim/da/hm10/t',shot)
-        ELM_signal=ELM_signal(dalpha.data,dalpha.time.data)
+        ELM_object=ELM_signal(dalpha.data,dalpha.time.data)
+        ELM_object.normalise_signal()
 
         #Method 1: subtract running mean from signal and search for peaks
-        ELM_signal.find_ELM_times_ac(ac_thres=0.02,min_time_peaks=0.5e-3)
-        ELM_signal.plot_ac_signal()
-        print(ELM_signal.ELM_ac_times) #time of ELMs
-        print(len(ELM_signal.ELM_ac_times))
-        print("--- %s seconds ---" % (time.time() - start_time))
-
+        ELM_object.find_ELM_times_ac(ac_thres=0.02,min_time_peaks=0.5e-3)
+    
+        #Method 2: normalise signal and then search for peaks (signal-mean)/std
+        ELM_object.find_ELM_times_norm(norm_thres=2.3,min_time_peaks=0.5e-3)
+        
         pkldata = {'shot': a.shot, 'times': a.times, 'W_ped': a.W_ped, 'Beta_ped': a.Beta_ped,
                     'W_ped_psin_te': a.W_ped_psin_te,'W_ped_psin_ne': a.W_ped_psin_ne,'W_ped_psin_pe': a.W_ped_psin_pe,
                     'H_ped_psin_te': a.H_ped_psin_te,'H_ped_psin_ne': a.H_ped_psin_ne,'H_ped_psin_pe': a.H_ped_psin_pe,
@@ -27,7 +27,7 @@ for i in allShotNums:
                     'H_ped_radius_te': a.H_ped_radius_te,'H_ped_radius_ne': a.H_ped_radius_ne,'H_ped_radius_pe': a.H_ped_radius_pe,
                     'aratio': a.aratio, 'elong': a.elong, 'delta': a.delta, 'NBI': a.NBI, 'ssNBI':a.ssNBI, "swNBI":a.swNBI,
                     "IpMax":a.IpMax, "Ip":a.Ip, "shotIndexed":a.shotIndexed, "betaN":a.betaN, "nullity":a.nullity, "beamPower":a.beamPower,
-                    "divertor":a.divertor, "whichBeams":a.whichBeams, "elmTimes":ELM_signal.ELM_ac_times}
+                    "divertor":a.divertor, "whichBeams":a.whichBeams, "elmTimesAc":ELM_object.ELM_ac_times, "elmTimesNorm":ELM_object.ELM_norm_times}
         filename = 'outputWithBeamPower3/outputWithTagData/outputWithElmTimes/MAST-U_pedestal_'+str(i)+'.pkl'
         outfile = open(filename, 'wb')
         pickle.dump(pkldata,outfile)
