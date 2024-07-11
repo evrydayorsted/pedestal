@@ -29,7 +29,7 @@ print("Libraries imported.")
 print("\n")
 
 class Shot:
-    def __init__(self, shotNum, datatype, folder="outputWithBeamPower3"):
+    def __init__(self, shotNum, datatype, folder="outputWithBeamPower3/outputWithTagData"):
         """Initializes shot object
 
         Args:

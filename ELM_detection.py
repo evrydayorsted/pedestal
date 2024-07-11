@@ -124,4 +124,5 @@ if __name__ == '__main__':
     print(ELM_signal.ELM_norm_times) #time of ELMs
     print(len(ELM_signal. ELM_norm_times))
     print("--- %s seconds ---" % (time.time() - start_time))
-    print("done")
+    print("Done")
+    
