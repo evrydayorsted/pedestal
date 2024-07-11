@@ -102,6 +102,7 @@ if __name__ == '__main__':
     print("--- %s seconds ---" % (time.time() - start_time))
     plt.plot(dalpha.time.data, dalpha.data)
     plt.xlim(0.5,0.6)
+    plt.ylim(0, 0.15)
     plt.xlabel("time (s)")
     plt.ylabel("dalpha trace")
     plt.savefig("plots/dalpha.png")
@@ -123,4 +124,5 @@ if __name__ == '__main__':
     print(ELM_signal.ELM_norm_times) #time of ELMs
     print(len(ELM_signal. ELM_norm_times))
     print("--- %s seconds ---" % (time.time() - start_time))
-    print("done")
+    print("Done")
+    
