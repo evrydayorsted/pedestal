@@ -35,6 +35,7 @@ class ELM_signal(object):
         plt.figure()
         plt.plot(ELM_signal.raw_time,ELM_signal.raw_signal,label='raw')
         plt.plot(ELM_signal.smooth_time,ELM_signal.smooth_mean,label='smooth')
+        plt.xlim(0.5,0.6)
         plt.xlabel('Time (s)')
         plt.ylabel('ELM signal')
         plt.legend()
@@ -63,6 +64,7 @@ class ELM_signal(object):
         plt.figure()
         plt.plot(ELM_signal.smooth_time,ELM_signal.norm_signal,label='Normalised signal')
         plt.plot(ELM_signal.raw_time,scale_raw*ELM_signal.raw_signal,label='x'+str(scale_raw)+' Raw signal')
+        plt.xlim(0.5,0.6)
         plt.xlabel('Time (s)')
         plt.ylabel('ELM signal')
         plt.legend()
@@ -78,6 +80,7 @@ class ELM_signal(object):
         plt.figure()
         plt.plot(ELM_signal.smooth_time,ELM_signal.ac_signal,label='Mean subtracted')
         plt.plot(ELM_signal.raw_time,scale_raw*ELM_signal.raw_signal,label='x'+str(scale_raw)+' Raw signal')
+        plt.xlim(0.5,0.6)
         plt.xlabel('Time (s)')
         plt.ylabel('ELM signal')
         plt.legend()
@@ -94,9 +97,14 @@ if __name__ == '__main__':
     start_time = time.time()
     print("running")
     dalpha=client.get('/xim/da/hm10/t',shot)
+
     print("got client data")
     print("--- %s seconds ---" % (time.time() - start_time))
-
+    plt.plot(dalpha.time.data, dalpha.data)
+    plt.xlim(0.5,0.6)
+    plt.xlabel("time (s)")
+    plt.ylabel("dalpha trace")
+    plt.savefig("plots/dalpha.png")
     ELM_signal=ELM_signal(dalpha.data,dalpha.time.data)
     ELM_signal.plot_smoothed_signal()
     ELM_signal.normalise_signal()
@@ -108,7 +116,7 @@ if __name__ == '__main__':
     print(ELM_signal.ELM_ac_times) #time of ELMs
     print(len(ELM_signal.ELM_ac_times))
     print("--- %s seconds ---" % (time.time() - start_time))
-    
+
     #Method 2: normalise signal and then search for peaks (signal-mean)/std
     ELM_signal.find_ELM_times_norm(norm_thres=2.3,min_time_peaks=0.5e-3)
     ELM_signal.plot_normalised_signal()
