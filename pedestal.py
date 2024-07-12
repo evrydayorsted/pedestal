@@ -97,8 +97,14 @@ class Shot:
                 self.divertor = pkldata["divertor"]
                 self.whichBeams = pkldata["whichBeams"]
                 self.pkl = True
+                try:
+                    self.elmTimesAc = pkldata["elmTimesAc"]
+                    self.elmTimesNorm = pkldata["elmTimesNorm"]
+                except:
+                    print("No elm data found")
                 print("Pkl data loaded")
                 print("\n")
+
 
             except Exception as error:
                 print(error)
@@ -755,7 +761,7 @@ class Shot:
 
 
     def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 60,
-                    cbarMax =2, cbarMin=0, numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = 0.75):
+                    cbarMax ="default", cbarMin="default", numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = 0.75, beamNumber = "all"):
         """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
         Args:
@@ -797,6 +803,20 @@ class Shot:
         # Data for contour is pulled from a pkl
         if not self.pkl:
             raise Exception("Must have pkl data to run contourPlot")
+        cbarMinDict = {"count":np.log10(numMin),
+                        "elong":1.95,
+                        "delta":0.4,
+                        "pedestalHeight":0,
+                        "pedestalSlope":0.75}
+        cbarMaxDict = {"count":2,
+                        "elong":2.1,
+                        "delta":0.55,
+                        "pedestalHeight":0.2,
+                        "pedestalSlope":3.75}
+        if cbarMin == "default":
+            cbarMin = cbarMinDict[countType]
+        if cbarMax == "default":
+            cbarMax = cbarMaxDict[countType]
         def setupfigure(figurenumber,xsize,ysize):
             '''Setup plotspace'''
             figurename = plt.figure(figurenumber,figsize=(xsize,ysize),
@@ -841,6 +861,14 @@ class Shot:
 
             Ntot   = np.zeros((len(xx)-1,len(yy)-1))
             totalPoints = 0
+            NBIMin = {"noBeams" : 0,
+                      "oneBeam" : 0.5,
+                      "twoBeams" : 2.25,
+                      "all" : 0}
+            NBIMax = {"noBeams" : 0.5,
+                      "oneBeam" : 2.25,
+                      "twoBeams" : np.inf, 
+                      "all" : np.inf}
             # Counts number of points that lie within each bin
             for i in range(0,len(xx)-1):
                 for j in range(0,len(yy)-1):
@@ -851,7 +879,10 @@ class Shot:
                                         (yquantity< yy[j+1]) &
                                         (self.Ip>IpMin*self.IpMax) &
                                         (self.Beta_ped/self.W_ped >lowSlopeFilter)&
-                                        (self.divertor=="SX"))
+                                        (self.NBI > NBIMin[beamNumber]) &
+                                        (self.NBI < NBIMax[beamNumber])
+                                        #(self.divertor=="SX")
+                                        )
 
                     if len(index) >= numMin:
                         totalPoints += len(index)
@@ -886,7 +917,7 @@ class Shot:
             frame1 = setupframe(1,1,1,x1,x2,y1,y2,
                                 xticks,yticks,xlabel,
                                 ylabel,xminor,yminor,font_size)
-
+            
             CS = plt.imshow(zz,extent=(x1,x2,y1,y2),origin='lower',
                             interpolation='none',
                             aspect='auto',
