@@ -18,7 +18,7 @@ for i in allShotNums:
         greenwald = pickle.load(infile)
         infile.close()
         #read off values
-        pkldata["greenwaldFraction"]= greenwald["greenwaldFraction"]
+        pkldata["greenwaldFraction"]= greenwald["greenwald_fraction"]
 
         filename = 'outputWithBeamPower3/outputWithTagData/outputWithElmTimes/outputWithGreenwald/'+'/MAST-U_pedestal_'+str(i)+'.pkl'
         outfile = open(filename, 'wb')
