@@ -29,7 +29,7 @@ print("Libraries imported.")
 print("\n")
 
 class Shot:
-    def __init__(self, shotNum, datatype, folder="outputWithBeamPower3/outputWithTagData"):
+    def __init__(self, shotNum, datatype, folder="output20240715"):
         """Initializes shot object
 
         Args:
@@ -100,6 +100,8 @@ class Shot:
                 try:
                     self.elmTimesAc = pkldata["elmTimesAc"]
                     self.elmTimesNorm = pkldata["elmTimesNorm"]
+                    self.greenwaldFraction = pkldata["greenwaldFraction"]
+                    self.elmPercent = pkldata["elmPercent"]
                 except:
                     print("No elm data found")
                 print("Pkl data loaded")
@@ -761,7 +763,7 @@ class Shot:
 
 
     def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 60,
-                    cbarMax ="default", cbarMin="default", numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = 0.75, beamNumber = "all"):
+                    cbarMax ="default", cbarMin="default", numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = 0.75, beamNumber = "twoBeams", elongRange="all", elmRange="late"):
         """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
         Args:
@@ -803,13 +805,14 @@ class Shot:
         # Data for contour is pulled from a pkl
         if not self.pkl:
             raise Exception("Must have pkl data to run contourPlot")
-        cbarMinDict = {"count":np.log10(numMin),
+        
+        cbarMinDict = {"count":0 if numMin<1 else np.log10(numMin),
                         "elong":1.95,
                         "delta":0.4,
                         "pedestalHeight":0,
                         "pedestalSlope":0.75}
         cbarMaxDict = {"count":2,
-                        "elong":2.1,
+                        "elong":2.15,
                         "delta":0.55,
                         "pedestalHeight":0.2,
                         "pedestalSlope":3.75}
@@ -869,6 +872,22 @@ class Shot:
                       "oneBeam" : 2.25,
                       "twoBeams" : np.inf, 
                       "all" : np.inf}
+            elongMin = {"low" : 0,
+                    "med" : 1.99,
+                    "hi" : 2.105,
+                    "all" : 0}
+            elongMax = {"low" :1.99,
+                    "med" : 2.105,
+                    "hi" : np.inf, 
+                    "all" : np.inf}
+            elmMin = {"early" : 0,
+                      "mid" : 0.33,
+                      "late" : 0.66,
+                      "all" : 0}
+            elmMax = {"early" :0.33,
+                      "mid" : 0.66,
+                      "late" : 1, 
+                      "all" : 1}
             # Counts number of points that lie within each bin
             for i in range(0,len(xx)-1):
                 for j in range(0,len(yy)-1):
@@ -880,10 +899,12 @@ class Shot:
                                         (self.Ip>IpMin*self.IpMax) &
                                         (self.Beta_ped/self.W_ped >lowSlopeFilter)&
                                         (self.NBI > NBIMin[beamNumber]) &
-                                        (self.NBI < NBIMax[beamNumber])
-                                        #(self.divertor=="SX")
-                                        )
-
+                                        (self.NBI < NBIMax[beamNumber]) & 
+                                        (self.elong > elongMin[elongRange]) &
+                                        (self.elong < elongMax[elongRange]) & 
+                                        (self.elmPercent > elmMin[elmRange]) &
+                                        (self.elmPercent < elmMax[elmRange]) )
+                    print(index)
                     if len(index) >= numMin:
                         totalPoints += len(index)
 
@@ -1014,7 +1035,9 @@ class Shot:
                     plt.legend()
                     # savefig("hw1_meaningful_file_name.pdf")
                     # PDFs can be used as LaTeX figures
-
+            elif plotnumber == 3:
+                plt.vlines(0.015, 0, 0.6)
+                plt.vlines(0.01, 0, 0.6)
             if saveFigure:
                 if plotName == "default":
                     plt.savefig("plots/"+outfilename+'.png')
@@ -1100,8 +1123,8 @@ class Shot:
 
             xquantity    = self.W_ped_psin_ne
             xlabel       = r'$\Delta_{\mathrm{ped,ne}}$'
-            x1           = 0.0
-            x2           = 0.15
+            x1           = 0.01
+            x2           = 0.015
             xticks       = 3
             xminor       = 0.05
             xsize        = numPix
