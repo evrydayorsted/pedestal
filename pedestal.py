@@ -762,8 +762,8 @@ class Shot:
 
 
 
-    def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 60,
-                    cbarMax ="default", cbarMin="default", numMin = 10, countType = "count", IpMin = 0.9, lowSlopeFilter = 0.75, beamNumber = "twoBeams", elongRange="all", elmRange="late"):
+    def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 30,
+                    cbarMax ="default", cbarMin="default", numMin = 20, countType = "count", IpMin = 0.9, lowSlopeFilter = 0.8, beamNumber = "twoBeams", elongRange="all", elmRange="all"):
         """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
         Args:
@@ -808,7 +808,7 @@ class Shot:
         
         cbarMinDict = {"count":0 if numMin<1 else np.log10(numMin),
                         "elong":1.95,
-                        "delta":0.4,
+                        "delta":0.45,
                         "pedestalHeight":0,
                         "pedestalSlope":0.75}
         cbarMaxDict = {"count":2,
@@ -889,6 +889,7 @@ class Shot:
                       "late" : 1, 
                       "all" : 1}
             # Counts number of points that lie within each bin
+            totalIndex =[]
             for i in range(0,len(xx)-1):
                 for j in range(0,len(yy)-1):
                     #Can add additional conditions here to filter what is shown in contour
@@ -904,7 +905,7 @@ class Shot:
                                         (self.elong < elongMax[elongRange]) & 
                                         (self.elmPercent > elmMin[elmRange]) &
                                         (self.elmPercent < elmMax[elmRange]) )
-                    print(index)
+                    totalIndex += list(index)
                     if len(index) >= numMin:
                         totalPoints += len(index)
 
@@ -914,21 +915,23 @@ class Shot:
                             else:
                                 Ntot[i,j] = np.log10(len(index))
                         elif countType == 'elong':
-                            Ntot[i,j]   = np.mean(self.elong[index])
+                            Ntot[i,j]   = np.median(self.elong[index])
                         elif countType == "delta":
-                            Ntot[i,j] = np.mean(self.delta[index])
+                            Ntot[i,j] = np.median(self.delta[index])
                         elif countType == "time":
-                            Ntot[i,j] = np.mean(self.times[index])
+                            Ntot[i,j] = np.median(self.times[index])
                         elif countType == "aratio":
-                            Ntot[i,j] = np.mean(self.aratio[index])
+                            Ntot[i,j] = np.median(self.aratio[index])
                         elif countType == "pedestalHeight":
-                            Ntot[i,j] = np.mean(self.Beta_ped[index])
+                            Ntot[i,j] = np.median(self.Beta_ped[index])
                         elif countType == "pedestalSlope":
-                            Ntot[i,j] = np.mean(self.Beta_ped[index]/self.W_ped[index])
+                            Ntot[i,j] = np.median(self.Beta_ped[index]/self.W_ped[index])
 
 
                     else:
                         Ntot[i,j] = None
+            print(totalIndex)
+            print(len(totalIndex))
             if (countType == "time"):
                 zeroindex = np.where(Ntot == 0.0)
                 Ntot[zeroindex] = -1.0e-10
@@ -964,11 +967,11 @@ class Shot:
             if countType=="count":
                 cbar.ax.set_ylabel('Log$_{10}$ (Number of equilibria)',fontsize=font_size)
             elif countType =="elong":
-                cbar.ax.set_ylabel(r'Avg. $\kappa$',fontsize=font_size)
+                cbar.ax.set_ylabel(r'Median $\kappa$',fontsize=font_size)
             elif countType == "delta":
-                cbar.ax.set_ylabel(r'Avg. $\delta$',fontsize=font_size)
+                cbar.ax.set_ylabel(r'Median $\delta$',fontsize=font_size)
             elif countType == "time":
-                cbar.ax.set_ylabel(r'Avg. Time',fontsize=font_size)
+                cbar.ax.set_ylabel(r'Median Time',fontsize=font_size)
             elif countType == "aratio":
                 cbar.ax.set_ylabel(r'Aspect Ratio',fontsize=font_size)
 
@@ -1035,9 +1038,9 @@ class Shot:
                     plt.legend()
                     # savefig("hw1_meaningful_file_name.pdf")
                     # PDFs can be used as LaTeX figures
-            elif plotnumber == 3:
-                plt.vlines(0.015, 0, 0.6)
-                plt.vlines(0.01, 0, 0.6)
+            # elif plotnumber == 3:
+                # plt.vlines(0.015, 0, 0.6)
+                # plt.vlines(0.01, 0, 0.6)
             if saveFigure:
                 if plotName == "default":
                     plt.savefig("plots/"+outfilename+'.png')
@@ -1080,7 +1083,7 @@ class Shot:
             xquantity    = self.W_ped
             xlabel       = r'$\Delta_{\mathrm{ped}}$'
             x1           = 0
-            x2           = 0.15
+            x2           = 0.12
             xticks       = 3
             xminor       = 0.025
             xsize        = numPix
@@ -1123,8 +1126,8 @@ class Shot:
 
             xquantity    = self.W_ped_psin_ne
             xlabel       = r'$\Delta_{\mathrm{ped,ne}}$'
-            x1           = 0.01
-            x2           = 0.015
+            x1           = 0.0
+            x2           = 0.15
             xticks       = 3
             xminor       = 0.05
             xsize        = numPix
@@ -1146,7 +1149,7 @@ class Shot:
             xquantity    = self.W_ped_psin_pe
             xlabel       = r'$\Delta_{\mathrm{ped,pe}}$'
             x1           = 0.0
-            x2           = 0.2
+            x2           = 0.1
             xticks       = 4
             xminor       = 0.025
             xsize        = numPix
@@ -1154,7 +1157,7 @@ class Shot:
             yquantity    = self.H_ped_psin_pe/1000.0
             ylabel       = r'$p_{\mathrm{e,ped}}$ (kPa)'
             y1           = 0.0
-            y2           = 1.2
+            y2           = 2
             yticks       = 4
             yminor       = 0.05
             ysize        = numPix
@@ -1168,7 +1171,7 @@ class Shot:
             xquantity    = self.W_ped_radius_te
             xlabel       = r'$W_{\mathrm{ped,Te}}$ (m)'
             x1           = 0.0
-            x2           = 0.09
+            x2           = 0.033
             xticks       = 3
             xminor       = 0.01
             xsize        = numPix
@@ -1176,7 +1179,7 @@ class Shot:
             yquantity    = self.H_ped_radius_te/1000.0
             ylabel       = r'$T_{\mathrm{e,ped,r}}$ (keV)'
             y1           = 0.0
-            y2           = 0.3
+            y2           = 0.4
             yticks       = 3
             yminor       = 0.05
             ysize        = numPix
@@ -1190,7 +1193,7 @@ class Shot:
             xquantity    = self.W_ped_radius_ne
             xlabel       = r'$W_{\mathrm{ped,ne}}$ (m)'
             x1           = 0.0
-            x2           = 0.09
+            x2           = 0.033
             xticks       = 3
             xminor       = 0.01
             xsize        = numPix
@@ -1212,7 +1215,7 @@ class Shot:
             xquantity    = self.W_ped_radius_pe
             xlabel       = r'$W_{\mathrm{ped,pe}}$ (m)'
             x1           = 0.0
-            x2           = 0.09
+            x2           = 0.0333
             xticks       = 3
             xminor       = 0.01
             xsize        = numPix
@@ -1220,7 +1223,7 @@ class Shot:
             yquantity    = self.H_ped_radius_pe/1000.0
             ylabel       = r'$p_{\mathrm{e,ped,r}}$ (kPa)'
             y1           = 0.0
-            y2           = 1.2
+            y2           = 2
             yticks       = 3
             yminor       = 0.05
             ysize        = numPix
