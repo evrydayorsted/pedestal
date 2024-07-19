@@ -763,7 +763,7 @@ class Shot:
 
 
     def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 30,
-                    cbarMax ="default", cbarMin="default", numMin = 20, countType = "count", IpMin = 0.9, lowSlopeFilter = 0.8, beamNumber = "twoBeams", elongRange="all", elmRange="all"):
+                    cbarMax ="default", cbarMin="default", numMin = 20, colorBy = "count", IpMin = 0.9, lowSlopeFilter = 0.8, beamNumber = "twoBeams", elongRange="all", elmRange="all"):
         """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
         Args:
@@ -779,7 +779,7 @@ class Shot:
             9 for aratio vs delta\n
             10 for elong vs delta\n
             11 for ne vs te
-            saveFigure (bool, optional): Saves the plot to "plots/{shot # or 'allShots'}{typeOfContourPlot}Colored{countType}.png.\n
+            saveFigure (bool, optional): Saves the plot to "plots/{shot # or 'allShots'}{typeOfContourPlot}Colored{colorBy}.png.\n
             Name overriden by plotName kwarg. Defaults to False.
             showFigure (bool, optional): Displays figure in matplotlib window. Defaults to True.
             fitHMode (bool, optional): _description_. Defaults to False.
@@ -789,7 +789,7 @@ class Shot:
             cbarMin (int, optional): Minimum value of the colorbar. Values below this value will be white. Defaults to 0.
             numMin (int, optional): Minimum number of equilibria in a pixel for the pixel to show up. Defaults to 10.
             posPed(bool, optional): Removes points with negative pedestal height. Defaults to True.
-            countType (str, optional): Determines what parameter will be colored by the colorbar.\n
+            colorBy (str, optional): Determines what parameter will be colored by the colorbar.\n
             "count" - log10 number of equilibria in the pixel\n
             "elong" - average elongation of the equilibria in the pixel\n
             "delta" - "" but with triangularity\n
@@ -817,9 +817,9 @@ class Shot:
                         "pedestalHeight":0.2,
                         "pedestalSlope":3.75}
         if cbarMin == "default":
-            cbarMin = cbarMinDict[countType]
+            cbarMin = cbarMinDict[colorBy]
         if cbarMax == "default":
-            cbarMax = cbarMaxDict[countType]
+            cbarMax = cbarMaxDict[colorBy]
         def setupfigure(figurenumber,xsize,ysize):
             '''Setup plotspace'''
             figurename = plt.figure(figurenumber,figsize=(xsize,ysize),
@@ -884,7 +884,7 @@ class Shot:
                       "mid" : 0.33,
                       "late" : 0.66,
                       "all" : 0}
-            elmMax = {"early" :0.33,
+            elmMax = {"early" :0.01,
                       "mid" : 0.66,
                       "late" : 1, 
                       "all" : 1}
@@ -904,27 +904,27 @@ class Shot:
                                         (self.elong > elongMin[elongRange]) &
                                         (self.elong < elongMax[elongRange]) & 
                                         (self.elmPercent > elmMin[elmRange]) &
-                                        (self.elmPercent < elmMax[elmRange]) )
+                                        (self.elmPercent < elmMax[elmRange]))
                     totalIndex += list(index)
                     if len(index) >= numMin:
                         totalPoints += len(index)
 
-                        if countType == "count":
+                        if colorBy == "count":
                             if len(index) == 0:
                                 Ntot[i,j] = -1e-10
                             else:
                                 Ntot[i,j] = np.log10(len(index))
-                        elif countType == 'elong':
+                        elif colorBy == 'elong':
                             Ntot[i,j]   = np.median(self.elong[index])
-                        elif countType == "delta":
+                        elif colorBy == "delta":
                             Ntot[i,j] = np.median(self.delta[index])
-                        elif countType == "time":
+                        elif colorBy == "time":
                             Ntot[i,j] = np.median(self.times[index])
-                        elif countType == "aratio":
+                        elif colorBy == "aratio":
                             Ntot[i,j] = np.median(self.aratio[index])
-                        elif countType == "pedestalHeight":
+                        elif colorBy == "pedestalHeight":
                             Ntot[i,j] = np.median(self.Beta_ped[index])
-                        elif countType == "pedestalSlope":
+                        elif colorBy == "pedestalSlope":
                             Ntot[i,j] = np.median(self.Beta_ped[index]/self.W_ped[index])
 
 
@@ -932,7 +932,7 @@ class Shot:
                         Ntot[i,j] = None
             print(totalIndex)
             print(len(totalIndex))
-            if (countType == "time"):
+            if (colorBy == "time"):
                 zeroindex = np.where(Ntot == 0.0)
                 Ntot[zeroindex] = -1.0e-10
             zz = np.transpose(Ntot)
@@ -956,23 +956,23 @@ class Shot:
             }
 
             try:
-                cmap = copy.copy(matplotlib.colormaps.get_cmap(colorDict[countType]))
+                cmap = copy.copy(matplotlib.colormaps.get_cmap(colorDict[colorBy]))
             except:
-                cmap = copy.copy(matplotlib.cm.get_cmap(colorDict[countType]))
+                cmap = copy.copy(matplotlib.cm.get_cmap(colorDict[colorBy]))
 
             cmap.set_under(color='white')
             cmap.set_bad(color='white')
             plt.set_cmap(cmap)
             cbar.ax.set_yticklabels([str(cbarMin), str(np.round((cbarMax-cbarMin)/2+cbarMin, 3)),str(cbarMax)],fontsize=font_size)#,'3.0'],fontsize=font_size)
-            if countType=="count":
+            if colorBy=="count":
                 cbar.ax.set_ylabel('Log$_{10}$ (Number of equilibria)',fontsize=font_size)
-            elif countType =="elong":
+            elif colorBy =="elong":
                 cbar.ax.set_ylabel(r'Median $\kappa$',fontsize=font_size)
-            elif countType == "delta":
+            elif colorBy == "delta":
                 cbar.ax.set_ylabel(r'Median $\delta$',fontsize=font_size)
-            elif countType == "time":
+            elif colorBy == "time":
                 cbar.ax.set_ylabel(r'Median Time',fontsize=font_size)
-            elif countType == "aratio":
+            elif colorBy == "aratio":
                 cbar.ax.set_ylabel(r'Aspect Ratio',fontsize=font_size)
 
 
@@ -1335,7 +1335,7 @@ class Shot:
 
 
 
-        outfilename = str(self.shotNum) + outfilename + "Colored" + countType
+        outfilename = str(self.shotNum) + outfilename + "Colored" + colorBy
         args = [plotnumber,outfilename,
                 xquantity,xlabel,x1,x2,xticks,xminor,xsize,
                 yquantity,ylabel,y1,y2,yticks,yminor,ysize, self]
