@@ -599,7 +599,7 @@ class Shot:
                 ax1.plot((rped_te_bot,rped_te_bot),(0.0,teped), lw=2, color='black', linestyle=':')
                 ax1.set_xlabel("")
                 ax1.set_ylabel("$T_{e}$ (eV)",fontsize=fs)
-                ax1.set_ylim([0, 400])
+                ax1.set_ylim([0, 500])
                 # ax1.set_ylim([0.,1.20*numpy.max(te_profile)])
                 ax1.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax1.tick_params(axis='x',labelsize=fs)
@@ -718,15 +718,15 @@ class Shot:
 
             # Plot pedestal radial locations vs. time
 
-    #        plt.plot(te_ped_location.time.data, te_ped_location.data, ".-", label="temperature location")
-    #        plt.plot(ne_ped_location.time.data, ne_ped_location.data, ".-", label="density location")
-    #        plt.xlabel("Time (s)")
-    #        plt.ylabel("Pedestal radial position (m)")
-    #        plt.legend()
-    #        plt.grid()
-    #        plt.tight_layout()
-    #        plt.show()
-        
+            plt.plot(te_ped_location.time.data, te_ped_location.data, ".-", label="temperature location")
+            plt.plot(ne_ped_location.time.data, ne_ped_location.data, ".-", label="density location")
+            plt.xlabel("Time (s)")
+            plt.ylabel("Pedestal radial position (m)")
+            plt.legend()
+            plt.grid()
+            plt.tight_layout()
+            plt.show()
+
             plt.plot(times, W_ped, label="Width")
             plt.plot(times, beta_ped, label="Beta")
             plt.plot(times, W_ped_psin_te, label="Width_Te_psin")
@@ -810,12 +810,14 @@ class Shot:
                         "elong":1.95,
                         "delta":0.45,
                         "pedestalHeight":0,
-                        "pedestalSlope":0.75}
+                        "pedestalSlope":0.75,
+                        "aratio":1.525}
         cbarMaxDict = {"count":2,
                         "elong":2.15,
                         "delta":0.55,
                         "pedestalHeight":0.2,
-                        "pedestalSlope":3.75}
+                        "pedestalSlope":3.75,
+                        "aratio":1.56}
         if cbarMin == "default":
             cbarMin = cbarMinDict[colorBy]
         if cbarMax == "default":
@@ -884,7 +886,7 @@ class Shot:
                       "mid" : 0.33,
                       "late" : 0.66,
                       "all" : 0}
-            elmMax = {"early" :0.01,
+            elmMax = {"early" :0.33,
                       "mid" : 0.66,
                       "late" : 1, 
                       "all" : 1}
@@ -949,8 +951,9 @@ class Shot:
             cbar = plt.colorbar(CS,ticks=[cbarMin, (cbarMax-cbarMin)/2+cbarMin, cbarMax])#,3.0])
             colorDict = {
                 "count":"viridis",
-                "elong":"rainbow",
-                "delta":"plasma",
+                "elong":"winter",#rainbow
+                "delta":"coolwarm",#plasma
+                "aratio":"coolwarm",
                 "pedestalHeight":"rainbow",
                 "pedestalSlope":"plasma"
             }
@@ -1091,7 +1094,7 @@ class Shot:
             yquantity    = self.Beta_ped
             ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
             y1           = 0
-            y2           =0.3
+            y2           =0.5
             yticks       = 3
             yminor       = 0.025
             ysize        = numPix

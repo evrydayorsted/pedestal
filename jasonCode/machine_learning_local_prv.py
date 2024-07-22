@@ -228,11 +228,11 @@ remove_correlations = True # if True, removes highly correlated variables from a
 
 n_squareness = 1
 
-# geo_quants_full = ['$\\langle | \\nabla_N \\alpha |^2 \\rangle$','$\\langle \\nabla_N \\alpha \\cdot \\nabla_N q \\rangle$','$\\langle | \\nabla_N q |^2 \\rangle$','$\\langle \\omega_{{\\kappa}}^{{\\alpha}} \\rangle$','$\\langle \\omega_{{\\kappa}}^{{\\alpha}}-\\omega_{{\\nabla B}}^{{\\alpha}} \\rangle$','$\\langle \\omega_{{\\kappa}}^{{q}} \\rangle$','$\\langle \\mathrm{{B}} \\rangle$', '$\\langle \\hat{{b}} \\cdot \\nabla_N \\theta \\rangle$', '$\\alpha_{{\\mathrm{{MHD}}}}$']
-# geo_quants = ['$\\langle | \\nabla_N \\alpha |^2 \\rangle$','$\\langle \\nabla_N \\alpha \\cdot \\nabla_N q \\rangle$','$\\langle | \\nabla_N q |^2 \\rangle$','$\\langle \\omega_{{\\kappa}}^{{\\alpha}} \\rangle$','$\\langle \\omega_{{\\kappa}}^{{\\alpha}}-\\omega_{{\\nabla B}}^{{\\alpha}} \\rangle$','$\\langle \\omega_{{\\kappa}}^{{q}} \\rangle$','$\\langle \\mathrm{{B}} \\rangle$', '$\\langle \\hat{{b}} \\cdot \\nabla_N \\theta \\rangle$', '$\\alpha_{{\\mathrm{{MHD}}}}$']
+# geo_quants_full = [r'$\langle | \nabla_N \alpha |^2 \rangle$',r'$\langle \nabla_N \alpha \cdot \nabla_N q \rangle$',r'$\langle | \nabla_N q |^2 \rangle$',r'$\langle \omega_{\kappa}^{\alpha} \rangle$',r'$\langle \omega_{\kappa}^{\alpha}-\omega_{\nabla B}^{\alpha} \rangle$',r'$\langle \omega_{\kappa}^{q} \rangle$',r'$\langle \mathrm{B} \rangle$', r'$\langle \hat{b} \cdot \nabla_N \theta \rangle$', r'$\alpha_{\mathrm{MHD}}$']
+# geo_quants = [r'$\langle | \nabla_N \alpha |^2 \rangle$',r'$\langle \nabla_N \alpha \cdot \nabla_N q \rangle$',r'$\langle | \nabla_N q |^2 \rangle$',r'$\langle \omega_{\kappa}^{\alpha} \rangle$',r'$\langle \omega_{\kappa}^{\alpha}-\omega_{\nabla B}^{\alpha} \rangle$',r'$\langle \omega_{\kappa}^{q} \rangle$',r'$\langle \mathrm{B} \rangle$', r'$\langle \hat{b} \cdot \nabla_N \theta \rangle$', r'$\alpha_{\mathrm{MHD}}$']
 
-geo_quants_full = ['$\\langle | \\nabla_N \\alpha |^2 \\rangle$','$\\langle \\nabla_N \\alpha \\cdot \\nabla_N q \\rangle$','$\\langle | \\nabla_N q |^2 \\rangle$','$\\langle \\omega_{{\\kappa}}^{{\\alpha}} \\rangle$','$\\langle \\omega_{{\\kappa}}^{{\\alpha}}-\\omega_{{\\nabla B}}^{{\\alpha}} \\rangle$','$\\langle \\omega_{{\\kappa}}^{{q}} \\rangle$','$\\langle \\mathrm{{B}} \\rangle$', '$\\langle \\hat{{b}} \\cdot \\nabla_N \\theta \\rangle$']
-geo_quants = ['$\\langle | \\nabla_N \\alpha |^2 \\rangle$','$\\langle \\nabla_N \\alpha \\cdot \\nabla_N q \\rangle$','$\\langle | \\nabla_N q |^2 \\rangle$','$\\langle \\omega_{{\\kappa}}^{{\\alpha}} \\rangle$','$\\langle \\omega_{{\\kappa}}^{{\\alpha}}-\\omega_{{\\nabla B}}^{{\\alpha}} \\rangle$','$\\langle \\omega_{{\\kappa}}^{{q}} \\rangle$','$\\langle \\mathrm{{B}} \\rangle$', '$\\langle \\hat{{b}} \\cdot \\nabla_N \\theta \\rangle$']
+geo_quants_full = [r'$\langle | \nabla_N \alpha |^2 \rangle$',r'$\langle \nabla_N \alpha \cdot \nabla_N q \rangle$',r'$\langle | \nabla_N q |^2 \rangle$',r'$\langle \omega_{\kappa}^{\alpha} \rangle$',r'$\langle \omega_{\kappa}^{\alpha}-\omega_{\nabla B}^{\alpha} \rangle$',r'$\langle \omega_{\kappa}^{q} \rangle$',r'$\langle \mathrm{B} \rangle$', r'$\langle \hat{b} \cdot \nabla_N \theta \rangle$']
+geo_quants = [r'$\langle | \nabla_N \alpha |^2 \rangle$',r'$\langle \nabla_N \alpha \cdot \nabla_N q \rangle$',r'$\langle | \nabla_N q |^2 \rangle$',r'$\langle \omega_{\kappa}^{\alpha} \rangle$',r'$\langle \omega_{\kappa}^{\alpha}-\omega_{\nabla B}^{\alpha} \rangle$',r'$\langle \omega_{\kappa}^{q} \rangle$',r'$\langle \mathrm{B} \rangle$', r'$\langle \hat{b} \cdot \nabla_N \theta \rangle$']
 
 ngeo_coefficients = len(geo_quants) # number of coefficients corresponding to below
 label_size = 40
@@ -265,7 +265,7 @@ if len(distance_to_stab_boundary_flat) > 1:
 	axs.set_xlabel('geo quantity', fontsize = label_size)
 	axs.set_xticklabels(geo_quants, rotation=65)
 	axs.set_ylabel('Spearman correlation', fontsize = label_size)
-	plt.suptitle('Correlation w/ $\\delta \\beta_{{\\theta,\\mathrm{{ped}}}}$ for KBM, sample size = {}'.format(len(distance_to_stab_boundary_flat)), fontsize = 0.6*label_size)
+	plt.suptitle(r'Correlation w/ $\delta \beta_{{\theta,\mathrm{{ped}}}}$ for KBM, sample size = {}'.format(len(distance_to_stab_boundary_flat)), fontsize = 0.6*label_size)
 	plt.savefig("pre_filtered_pre_correlation_removal_Spearman_deltabetaped_nstx.pdf",bbox_inches='tight', pad_inches=0.1)
 
 	# plt.show()
@@ -349,10 +349,10 @@ plt.barh(feature_names_latex[:top_filter], importances_sorted[:top_filter], colo
 # ~ plt.barh(feature_names_sorted[-top_filter:], importances_sorted[-top_filter:], color='b', align='center')
 plt.xlabel('Importance')
 plt.ylabel('Feature')
-plt.title('Feature Importances in Random Forest Model For $\\delta \\beta_{{\\theta,\\mathrm{{ped}}}}$')
+plt.title('Feature Importances in Random Forest Model For $\delta \beta_{\theta,\mathrm{ped}}$')
 plt.gca().invert_yaxis()
 # plt.show()
-plt.savefig("feature_importance_deltabetaped_nstx.pdf",bbox_inches='tight', pad_inches=0.1)
+#plt.savefig("feature_importance_deltabetaped_nstx.pdf",bbox_inches='tight', pad_inches=0.1)
 
 
 #### PERMUTATION IMPORTANCE
@@ -392,10 +392,10 @@ sorted_importances_mean = importances_mean[sorted_idx]
 bars=plt.barh(range(len(sorted_importances_mean)), sorted_importances_mean, xerr=importances_std[sorted_idx])
 plt.yticks(range(len(importances_mean[sorted_idx])), sorted_important_features)
 
-plt.xlabel("Permutation Importance")
-plt.title("Permutation Importances in Random Forest Model for $\\delta \\beta_{{\\theta,\\mathrm{{ped}}}}$")
+plt.xlabel(r"Permutation Importance")
+plt.title(r"Permutation Importances in Random Forest Model for $\delta \beta_{\theta,\mathrm{ped}}$")
 # plt.show()
-plt.savefig("permutation_importance_deltabetaped_nstx.pdf",bbox_inches='tight', pad_inches=0.1)
+#plt.savefig("permutation_importance_deltabetaped_nstx.pdf",bbox_inches='tight', pad_inches=0.1)
 
 
 
@@ -552,9 +552,9 @@ fig.subplots_adjust(hspace = .5, wspace=.7)
 contour =ax.contourf(xi,yi,zi_smooth,cmap='seismic', norm = norm)
 cbar = plt.colorbar(contour)  # Show color scale
 cbar.ax.tick_params(labelsize=24)
-cbar.set_label('$\\delta \\beta_{{\\theta,\\mathrm{{ped}}}}$', fontsize=label_size)
-ax.set_xlabel('$\\delta_0$', fontsize = label_size)
-ax.set_ylabel('$\\zeta_0$', fontsize = label_size)
+cbar.set_label(r'$\delta \beta_{\theta,\mathrm{ped}}$', fontsize=label_size)
+ax.set_xlabel(r'$\delta_0$', fontsize = label_size)
+ax.set_ylabel(r'$\zeta_0$', fontsize = label_size)
 plt.tick_params(axis='both', which='major', labelsize=24) 
 plt.show()
 ####### Dark color scheme
@@ -566,9 +566,9 @@ ax.contour(xi,yi,zi_smooth,levels= [0],colors=['k'], linestyles = ['--'], linewi
 contour =ax.contourf(xi,yi,zi_smooth,cmap='seismic', norm = norm)
 cbar = plt.colorbar(contour)  # Show color scale
 cbar.ax.tick_params(labelsize=24)
-cbar.set_label('$\\delta \\beta_{{\\theta,\\mathrm{{ped}}}}$', fontsize=label_size)
-# ax.set_xlabel('$\\delta_0$', fontsize = label_size, color='white')
-# ax.set_ylabel('$\\zeta_0$', fontsize = label_size, color='white')
+cbar.set_label(r'$\delta \beta_{\theta,\mathrm{ped}}$', fontsize=label_size)
+# ax.set_xlabel(r'$\delta_0$', fontsize = label_size, color='white')
+# ax.set_ylabel(r'$\zeta_0$', fontsize = label_size, color='white')
 ax.set_ylabel('squareness', fontsize = label_size, color='white')
 ax.set_xlabel('triangularity', fontsize = label_size, color='white')
 plt.tick_params(axis='both', which='major', labelsize=24, colors='white') 
