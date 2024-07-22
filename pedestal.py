@@ -605,7 +605,7 @@ class Shot:
                 ax1.tick_params(axis='x',labelsize=fs)
                 ax1.tick_params(axis='y',labelsize=fs)
                 ax1.tick_params(labelbottom=False)
-
+                ax1.legend()
                 ax2.plot(radius, ne_profile/1e19, lw=2, color="red")
                 ax2.errorbar(r.data[time_index_ayc],ne.data[time_index_ayc]/1e19,yerr=dne.data[time_index_ayc]/1e19,color='blue',marker='o',linestyle='None')
                 ax2.plot((rped_ne,rped_ne),(0.0,neped), lw=2, color='black', linestyle='--')
@@ -629,7 +629,6 @@ class Shot:
                 ax3.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax3.tick_params(axis='x',labelsize=fs)
                 ax3.tick_params(axis='y',labelsize=fs)
-
                 plt.tight_layout()
                 if saveFigure:
                     plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
