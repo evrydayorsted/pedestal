@@ -607,7 +607,7 @@ class Shot:
                 ax1.tick_params(axis='y',labelsize=fs)
                 ax1.tick_params(labelbottom=False)
                 # reordering the labels 
-                handles, labels = plt.gca().get_legend_handles_labels() 
+                handles, labels = ax1.gca().get_legend_handles_labels() 
                 print(handles, labels)
                 # specify order 
                 order = [1,2,3,0] 
