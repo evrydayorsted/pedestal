@@ -29,7 +29,7 @@ print("Libraries imported.")
 print("\n")
 
 class Shot:
-    def __init__(self, shotNum, datatype, folder="output20240715"):
+    def __init__(self, shotNum, datatype, folder=""):
         """Initializes shot object
 
         Args:
@@ -606,7 +606,14 @@ class Shot:
                 ax1.tick_params(axis='x',labelsize=fs)
                 ax1.tick_params(axis='y',labelsize=fs)
                 ax1.tick_params(labelbottom=False)
-                ax1.legend()
+                # reordering the labels 
+                handles, labels = plt.gca().get_legend_handles_labels() 
+                
+                # specify order 
+                order = [1,2,3,0] 
+                
+                # pass handle & labels lists along with order as below 
+                ax1.legend([handles[i] for i in order], [labels[i] for i in order]) 
                 ax2.plot(radius, ne_profile/1e19, lw=2, color="red")
                 ax2.errorbar(r.data[time_index_ayc],ne.data[time_index_ayc]/1e19,yerr=dne.data[time_index_ayc]/1e19,color='blue',marker='o',linestyle='None')
                 ax2.plot((rped_ne,rped_ne),(0.0,neped), lw=2, color='black', linestyle='--')
