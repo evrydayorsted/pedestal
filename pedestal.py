@@ -599,7 +599,7 @@ class Shot:
                 ax1.plot((rped_te_bot,rped_te_bot),(0.0,teped), lw=2, color='black', linestyle=':')
                 ax1.set_xlabel("")
                 ax1.set_ylabel("$T_{e}$ (eV)",fontsize=fs)
-                ax1.set_ylim([0, 500])
+                ax1.set_ylim([0, 1000])
                 # ax1.set_ylim([0.,1.20*numpy.max(te_profile)])
                 ax1.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax1.tick_params(axis='x',labelsize=fs)
