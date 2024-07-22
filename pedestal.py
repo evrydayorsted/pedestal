@@ -590,7 +590,7 @@ class Shot:
                 ax1 = fig.add_subplot(3, 1, 1)
                 ax2 = fig.add_subplot(3, 1, 2)
                 ax3 = fig.add_subplot(3, 1, 3)
-                fig.suptitle(f"{shot} @ {te_ped_location.time.data[time_index_apf]:.3f} ms",fontsize=fs)
+                # fig.suptitle(f"{shot} @ {te_ped_location.time.data[time_index_apf]:.3f} ms",fontsize=fs)
 
                 ax1.plot(radius, te_profile, lw=2, color="red")
                 ax1.errorbar(r.data[time_index_ayc],te.data[time_index_ayc],yerr=dte.data[time_index_ayc],color='blue',marker='o',linestyle='None')
