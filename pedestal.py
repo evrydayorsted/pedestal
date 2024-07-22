@@ -29,7 +29,7 @@ print("Libraries imported.")
 print("\n")
 
 class Shot:
-    def __init__(self, shotNum, datatype, folder=""):
+    def __init__(self, shotNum, datatype, folder="output20240715"):
         """Initializes shot object
 
         Args:
@@ -593,7 +593,7 @@ class Shot:
                 # fig.suptitle(f"{shot} @ {te_ped_location.time.data[time_index_apf]:.3f} ms",fontsize=fs)
 
                 ax1.errorbar(r.data[time_index_ayc],te.data[time_index_ayc],yerr=dte.data[time_index_ayc],color='blue',marker='o',linestyle='None', label="Thomson Data")
-                ax1.plot(radius, te_profile, lw=2, color="red", label="mtanh fit")
+                ax1.plot(radius, te_profile, lw=2, color="red", label="mtanh Fit")
 
                 ax1.plot((rped_te,rped_te),(0.0,teped), lw=2, color='black', linestyle='--', label = "Pedestal Location")
                 ax1.plot((rped_te_top,rped_te_top),(0.0,teped), lw=2, color='black', linestyle=':', label="Pedestal Width")
