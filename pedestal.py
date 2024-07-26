@@ -600,20 +600,13 @@ class Shot:
                 ax1.plot((rped_te_bot,rped_te_bot),(0.0,teped), lw=2, color='black', linestyle=':')
                 ax1.set_xlabel("")
                 ax1.set_ylabel("$T_{e}$ (eV)",fontsize=fs)
-                ax1.set_ylim([0, 1000])
+                ax1.set_ylim([0, 800])
                 # ax1.set_ylim([0.,1.20*numpy.max(te_profile)])
                 ax1.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax1.tick_params(axis='x',labelsize=fs)
                 ax1.tick_params(axis='y',labelsize=fs)
                 ax1.tick_params(labelbottom=False)
-                # reordering the labels 
-                handles, labels = plt.gca().get_legend_handles_labels() 
-                print(handles, labels)
-                # specify order 
-                order = [1,2,3,0] 
-                
-                # pass handle & labels lists along with order as below 
-                ax1.legend([handles[i] for i in order], [labels[i] for i in order]) 
+                ax1.legend()
                 ax2.plot(radius, ne_profile/1e19, lw=2, color="red")
                 ax2.errorbar(r.data[time_index_ayc],ne.data[time_index_ayc]/1e19,yerr=dne.data[time_index_ayc]/1e19,color='blue',marker='o',linestyle='None')
                 ax2.plot((rped_ne,rped_ne),(0.0,neped), lw=2, color='black', linestyle='--')
@@ -621,7 +614,7 @@ class Shot:
                 ax2.plot((rped_ne_bot,rped_ne_bot),(0.0,neped), lw=2, color='black', linestyle=':')
                 ax2.set_ylabel("$n_{e}$ ($10^{19}$ m$^{-3}$)",fontsize=fs)
                 # ax2.set_ylim([0,1.20*numpy.max(ne_profile/1e19)])
-                ax2.set_ylim([0, 6])
+                ax2.set_ylim([0, 5])
                 ax2.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
                 ax2.tick_params(axis='x',labelsize=fs)
                 ax2.tick_params(axis='y',labelsize=fs)
@@ -633,8 +626,10 @@ class Shot:
                 ax3.plot((rped_pe_bot,rped_pe_bot),(0.0,peped), lw=2, color='black', linestyle=':')
                 ax3.set_xlabel("$R$ (m)",fontsize=fs)
                 ax3.set_ylabel("$p_{e}$ (kPa)",fontsize=fs)
-                ax3.set_ylim([0.,1.20*numpy.max(pe_profile/1000.0)])
-                ax3.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
+                ax3.set_ylim([0,2])
+                #ax3.set_ylim([0.,1.20*numpy.max(pe_profile/1000.0)])
+                # ax3.set_xlim([r0-0.10*(r1-r0),r1+0.10*(r1-r0)])
+                ax3.set_xlim([1.3,1.45])
                 ax3.tick_params(axis='x',labelsize=fs)
                 ax3.tick_params(axis='y',labelsize=fs)
                 plt.tight_layout()
@@ -770,7 +765,7 @@ class Shot:
 
 
     def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 30,
-                    cbarMax ="default", cbarMin="default", numMin = 20, colorBy = "count", IpMin = 0.9, lowSlopeFilter = 0.8, beamNumber = "twoBeams", elongRange="all", elmRange="all"):
+                    cbarMax ="default", cbarMin="default", numMin = 10, colorBy = "count", IpMin = 0.9, lowSlopeFilter = 0.8, beamNumber = "twoBeams", elongRange="all", elmRange="all", printValues=False, discreteCb=False, setUnder=False):
         """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
         Args:
@@ -812,7 +807,8 @@ class Shot:
         # Data for contour is pulled from a pkl
         if not self.pkl:
             raise Exception("Must have pkl data to run contourPlot")
-        
+        if colorBy=="count":
+            setUnder == True
         cbarMinDict = {"count":0 if numMin<1 else np.log10(numMin),
                         "elong":1.95,
                         "delta":0.45,
@@ -939,8 +935,9 @@ class Shot:
 
                     else:
                         Ntot[i,j] = None
-            print(totalIndex)
-            print(len(totalIndex))
+            if printValues:
+                print(totalIndex)
+                print(len(totalIndex))
             if (colorBy == "time"):
                 zeroindex = np.where(Ntot == 0.0)
                 Ntot[zeroindex] = -1.0e-10
@@ -951,11 +948,6 @@ class Shot:
                                 xticks,yticks,xlabel,
                                 ylabel,xminor,yminor,font_size)
             
-            CS = plt.imshow(zz,extent=(x1,x2,y1,y2),origin='lower',
-                            interpolation='none',
-                            aspect='auto',
-                            vmin=cbarMin,vmax=cbarMax)    
-            cbar = plt.colorbar(CS,ticks=[cbarMin, (cbarMax-cbarMin)/2+cbarMin, cbarMax])#,3.0])
             colorDict = {
                 "count":"viridis",
                 "elong":"winter",#rainbow
@@ -964,16 +956,45 @@ class Shot:
                 "pedestalHeight":"rainbow",
                 "pedestalSlope":"plasma"
             }
-
             try:
                 cmap = copy.copy(matplotlib.colormaps.get_cmap(colorDict[colorBy]))
-            except:
+            except Exception as error:
+                print(error)
                 cmap = copy.copy(matplotlib.cm.get_cmap(colorDict[colorBy]))
-
             cmap.set_under(color='white')
             cmap.set_bad(color='white')
-            plt.set_cmap(cmap)
-            cbar.ax.set_yticklabels([str(cbarMin), str(np.round((cbarMax-cbarMin)/2+cbarMin, 3)),str(cbarMax)],fontsize=font_size)#,'3.0'],fontsize=font_size)
+            CS = plt.imshow(zz,extent=(x1,x2,y1,y2),origin='lower',
+                            interpolation='none',
+                            aspect='auto',
+                            vmin=cbarMin,vmax=cbarMax, cmap = cmap)  
+            if discreteCb:
+                import matplotlib as mpl
+
+                # cmap = plt.cm.jet  # define the colormap
+                # # extract all colors from the .jet map
+                cmaplist = [cmap(i) for i in range(cmap.N)]
+                # # force the first color entry to be grey
+                # cmaplist[0] = (.5, .5, .5, 1.0)
+
+                # create the new map
+                cmap = mpl.colors.LinearSegmentedColormap.from_list(
+                    'Custom cmap', cmaplist, cmap.N)
+        
+                # define the bins and normalize
+                bounds = np.linspace(cbarMin, cbarMax, 4)
+                # bounds = np.array([0, 2.017, 2.083, 100])
+                norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+                if setUnder:
+                    cmap.set_under(color='white')
+                cmap.set_bad(color='white')
+                CS = plt.imshow(zz,extent=(x1,x2,y1,y2),origin='lower',
+                                interpolation='none',
+                                aspect='auto', cmap = cmap, norm = norm) 
+                 
+            cbar = plt.colorbar(CS,ticks=[cbarMin, np.round((cbarMax-cbarMin)/2+cbarMin, 2), cbarMax])#,3.0])
+            # cbar.ax.set_yticklabels([str(0), str(5),str(2.1),str("."),"hello"],fontsize=font_size)
+            cbar.ax.set_yticklabels([str(cbarMin), str(np.round((cbarMax-cbarMin)/2+cbarMin, 2)),str(cbarMax)],fontsize=font_size)#,'3.0'],fontsize=font_size)
+            
             if colorBy=="count":
                 cbar.ax.set_ylabel('Log$_{10}$ (Number of equilibria)',fontsize=font_size)
             elif colorBy =="elong":
@@ -994,23 +1015,29 @@ class Shot:
                 x_width = np.linspace(x1,x2,100)
                 y_beta  = (x_width/0.43)**(1.0/1.03)
                 y_beta2 = (x_width/0.08)**(2.0)
+                # plt.plot(x_width, (1/0.146)**2*x_width**2,color='magenta',linestyle='--')
+                # plt.plot(x_width, (1/0.104)**(1/0.309)*x_width**(1/0.309), color = "blue", linestyle = "--")
 
-                #Plots some predictive models on top of contour plot
-                #plt.plot(x_width,y_beta,color='red',linestyle='--')
-                #plt.plot(x_width,y_beta2,color='magenta',linestyle='--')
-                #plt.plot(x_width, 3/4*x_width, color="blue")
-                #plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
-                #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.12,y2+0.008),color='red',fontsize=13,annotation_clip=False)
-                #plt.annotate(r'$\Delta_{\mathrm{ped}} = 0.08\beta_{\theta,\mathrm{ped}}^{0.5}$',(0.0,y2+0.008),color='magenta',fontsize=13,annotation_clip=False)
-                # plt.plot(x_width, 0.75*x_width, "r")
-                #Provides a fit to the HMode data
+                # Plots some predictive models on top of contour plot
+                # plt.plot(x_width,y_beta,color='red',linestyle='--')
+                # plt.plot(x_width,y_beta2,color='magenta',linestyle='--')
+                # plt.plot(x_width, 3/4*x_width, color="blue")
+                # plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
+
+
+                # plt.annotate(r'$\Delta = 0.104\beta^{0.309}$',(0.0,y2+0.008),color='blue',fontsize=13,annotation_clip=False)
+                # plt.annotate(r'$\Delta=0.146\sqrt{\beta}$',(0.1,y2-0.05),color='magenta',fontsize=13,annotation_clip=False)
+                # plt.plot(x_width, 0.8*x_width, "r")
+                # plt.annotate(r'$\beta > 0.8\Delta$ cutoff',(0.16,y2-0.18),color='red',fontsize=13,annotation_clip=False)
+                # plt.plot(x_width, 0.8*x_width, "r")
+                # # Provides a fit to the HMode data
+                # plt.legend()
                 
                 if fitHMode:
                     validXQuantity = np.array([])
                     validYQuantity = np.array([])
                     # from smith paper
-                    # plt.plot(x_width, 0.146*np.sqrt(x_width), label=r"$0.146\sqrt{\beta}$")
-                    # plt.plot(x_width, 0.104*x_width**0.309, label=r"$0.104\beta^{0.309}$")
+                    
 
                     for i in range(len(xquantity)):
                         #filters which data points to fit
@@ -1060,7 +1087,7 @@ class Shot:
                     print("saved "+"plots/"+plotName+'.png')
 
             if showFigure:
-                plt.title(str(totalPoints)+" equilibria")
+                # plt.title(str(totalPoints)+" equilibria")
                 plt.legend()
                 plt.show()        # Beta vs. Delta
         
@@ -1102,7 +1129,7 @@ class Shot:
             ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
             y1           = 0
             y2           =0.5
-            yticks       = 3
+            yticks       = 5
             yminor       = 0.025
             ysize        = numPix
 
