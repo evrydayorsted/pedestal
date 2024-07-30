@@ -619,6 +619,7 @@ class Shot:
                 ax2.tick_params(axis='x',labelsize=fs)
                 ax2.tick_params(axis='y',labelsize=fs)
                 ax2.tick_params(labelbottom=False)
+                 
 
                 ax3.plot(radius, pe_profile/1000.0, lw=2, color="red")
                 ax3.plot((rped_pe,rped_pe),(0.0,peped), lw=2, color='black', linestyle='--')
@@ -632,6 +633,7 @@ class Shot:
                 ax3.set_xlim([1.3,1.45])
                 ax3.tick_params(axis='x',labelsize=fs)
                 ax3.tick_params(axis='y',labelsize=fs)
+                ax3.locator_params(axis='both', nbins=4)
                 plt.tight_layout()
                 if saveFigure:
                     plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png", dpi=600)
