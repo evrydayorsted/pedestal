@@ -634,7 +634,7 @@ class Shot:
                 ax3.tick_params(axis='y',labelsize=fs)
                 plt.tight_layout()
                 if saveFigure:
-                    plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
+                    plt.savefig("plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png", dpi=600)
                     print("saved " + "plots/"+self.shotNum+"_"+str(int(time*1000))+"_"+"plotVsRadius.png")
                 if showFigure:
                     plt.show()
