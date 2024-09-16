@@ -766,8 +766,8 @@ class Shot:
 
 
 
-    def contourPlot(self, plotnumber, saveFigure=False, showFigure=True, fitHMode=False, plotName = "default", numPix = 30,
-                    cbarMax ="default", cbarMin="default", numMin = 10, colorBy = "count", IpMin = 0.9, lowSlopeFilter = 0.8, beamNumber = "twoBeams", elongRange="all", elmRange="all", printValues=False, discreteCb=False, setUnder=False):
+    def contourPlot(self, plotnumber, saveFigure=True, showFigure=True, fitHMode=False, plotName = "default", numPix = 30,
+                    cbarMax ="default", cbarMin="default", numMin = 10, colorBy = "count", IpMin = 0.9, lowSlopeFilter = 0.8, beamNumber = "twoBeams", elongRange="all", elmRange="all", printValues=False, discreteCb=False, setUnder=False, filter = True):
         """Generates a contour plot comparing two parameters, and coloring by a third parameter.
 
         Args:
@@ -805,7 +805,11 @@ class Shot:
         
          Adapted from Jack Berkery contourPlot 2024
          """
-        
+        if filter == False:
+            beamNumber = "all"
+            numMin=0
+            lowSlopeFilter=0
+            IpMin=0
         # Data for contour is pulled from a pkl
         if not self.pkl:
             raise Exception("Must have pkl data to run contourPlot")
@@ -813,7 +817,7 @@ class Shot:
             setUnder == True
         cbarMinDict = {"count":0 if numMin<1 else np.log10(numMin),
                         "elong":1.95,
-                        "delta":0.45,
+                        "delta":0.47,
                         "pedestalHeight":0,
                         "pedestalSlope":0.75,
                         "aratio":1.525}
@@ -952,8 +956,8 @@ class Shot:
             
             colorDict = {
                 "count":"viridis",
-                "elong":"winter",#rainbow
-                "delta":"coolwarm",#plasma
+                "elong":"winter",#rainbowwinter
+                "delta":"coolwarm",#plasmacoolwarm
                 "aratio":"coolwarm",
                 "pedestalHeight":"rainbow",
                 "pedestalSlope":"plasma"
@@ -1013,12 +1017,13 @@ class Shot:
 
             plt.subplots_adjust(left=0.20,right = 0.90,bottom=0.20,top=0.92)
             # This provides a square plot area with a 5in by 6in figure area and the colorbar on the right
-            if plotnumber == 1 or plotnumber == 0:
+            #change to or for effect
+            if plotnumber == 1 and plotnumber == 0:
                 x_width = np.linspace(x1,x2,100)
                 y_beta  = (x_width/0.43)**(1.0/1.03)
                 y_beta2 = (x_width/0.08)**(2.0)
-                # plt.plot(x_width, (1/0.146)**2*x_width**2,color='magenta',linestyle='--')
-                # plt.plot(x_width, (1/0.104)**(1/0.309)*x_width**(1/0.309), color = "blue", linestyle = "--")
+                plt.plot(x_width, (1/0.146)**2*x_width**2,color='magenta',linestyle='--')
+                plt.plot(x_width, (1/0.104)**(1/0.309)*x_width**(1/0.309), color = "blue", linestyle = "--")
 
                 # Plots some predictive models on top of contour plot
                 # plt.plot(x_width,y_beta,color='red',linestyle='--')
@@ -1027,13 +1032,13 @@ class Shot:
                 # plt.annotate(r'NSTX GCP: $\Delta_{\mathrm{ped}} = 0.43\beta_{\theta,\mathrm{ped}}^{1.03}$',(0.06,0.308),color='red',fontsize=13,annotation_clip=False)
 
 
-                # plt.annotate(r'$\Delta = 0.104\beta^{0.309}$',(0.0,y2+0.008),color='blue',fontsize=13,annotation_clip=False)
-                # plt.annotate(r'$\Delta=0.146\sqrt{\beta}$',(0.1,y2-0.05),color='magenta',fontsize=13,annotation_clip=False)
-                # plt.plot(x_width, 0.8*x_width, "r")
-                # plt.annotate(r'$\beta > 0.8\Delta$ cutoff',(0.16,y2-0.18),color='red',fontsize=13,annotation_clip=False)
-                # plt.plot(x_width, 0.8*x_width, "r")
-                # # Provides a fit to the HMode data
-                # plt.legend()
+                plt.annotate(r'$\Delta = 0.104\beta^{0.309}$',(0.0,y2+0.008),color='blue',fontsize=13,annotation_clip=False)
+                plt.annotate(r'$\Delta=0.146\sqrt{\beta}$',(0.1,y2-0.05),color='magenta',fontsize=13,annotation_clip=False)
+                plt.plot(x_width, 0.8*x_width, "r")
+                plt.annotate(r'$\beta > 0.8\Delta$ cutoff',(0.16,y2-0.18),color='red',fontsize=13,annotation_clip=False)
+                plt.plot(x_width, 0.8*x_width, "r")
+                # Provides a fit to the HMode data
+                plt.legend()
                 
                 if fitHMode:
                     validXQuantity = np.array([])
@@ -1082,11 +1087,11 @@ class Shot:
                 # plt.vlines(0.01, 0, 0.6)
             if saveFigure:
                 if plotName == "default":
-                    plt.savefig("plots/"+outfilename+'.png')
+                    plt.savefig("plots/"+outfilename+'.jpeg', dpi=600)
                     print("saved "+"plots/"+outfilename+'.png')
                 else:
-                    plt.savefig("plots/"+plotName+'.png')
-                    print("saved "+"plots/"+plotName+'.png')
+                    plt.savefig("plots/"+plotName+'.jpeg', dpi=600)
+                    print("saved "+"plots/"+plotName+'.jpeg')
 
             if showFigure:
                 # plt.title(str(totalPoints)+" equilibria")
@@ -1100,7 +1105,7 @@ class Shot:
             yquantity    = self.W_ped
             ylabel       = r'$\Delta_{\mathrm{ped}}$'
             y1           = 0.0
-            y2           = 0.15
+            y2           = 0.12
             yticks       = 4
             yminor       = 0.025
             ysize        = numPix
@@ -1122,16 +1127,16 @@ class Shot:
             xquantity    = self.W_ped
             xlabel       = r'$\Delta_{\mathrm{ped}}$'
             x1           = 0
-            x2           = 0.12
-            xticks       = 3
+            x2           = 0.1
+            xticks       = 2
             xminor       = 0.025
             xsize        = numPix
 
             yquantity    = self.Beta_ped
-            ylabel       = r'$\beta_{\theta,\mathrm{ped}}$'
+            ylabel       = r'$\beta_{\mathrm{ped}}$'
             y1           = 0
-            y2           =0.5
-            yticks       = 5
+            y2           =0.3
+            yticks       = 3
             yminor       = 0.025
             ysize        = numPix
 
@@ -1144,16 +1149,16 @@ class Shot:
             xquantity    = self.W_ped_psin_te
             xlabel       = r'$\Delta_{\mathrm{ped,Te}}$'
             x1           = 0.0
-            x2           = 0.15
-            xticks       = 3
+            x2           = 0.1
+            xticks       = 2
             xminor       = 0.025
             xsize        = numPix
 
             yquantity    = self.H_ped_psin_te/1000.0
             ylabel       = r'$T_{\mathrm{e,ped}}$ (keV)'
             y1           = 0.0
-            y2           = 0.4
-            yticks       = 4
+            y2           = 0.3
+            yticks       = 3
             yminor       = 0.05
             ysize        = numPix
 
@@ -1166,8 +1171,8 @@ class Shot:
             xquantity    = self.W_ped_psin_ne
             xlabel       = r'$\Delta_{\mathrm{ped,ne}}$'
             x1           = 0.0
-            x2           = 0.15
-            xticks       = 3
+            x2           = 0.1
+            xticks       = 2
             xminor       = 0.05
             xsize        = numPix
 
@@ -1318,7 +1323,7 @@ class Shot:
 
             xquantity    = self.elong
             xlabel       = r'$\kappa$'
-            x1           = 0
+            x1           = 0.5
             x2           = 2.5
             xticks       = 4
             xminor       = 0.25
@@ -1326,9 +1331,9 @@ class Shot:
 
             yquantity    = self.delta
             ylabel       = r'$\delta$'
-            y1           = 0
-            y2           = 0.7
-            yticks       = 4
+            y1           = 0.25
+            y2           = 0.75
+            yticks       = 2
             yminor       = 0.05
             ysize        = numPix
 
